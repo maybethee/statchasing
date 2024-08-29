@@ -5,12 +5,17 @@ class FetchReplaysService
 
   def initialize
     @options = {
-      headers: { 'Authorization' => "#{ENV['API_AUTH_TOKEN']}" }
+      headers: { 'Authorization' => "#{ENV['API_AUTH_TOKEN']}" },
+      query: {
+        'player-name': 'BijouBug',
+        'playlist': 'ranked-doubles',
+        'count': 10
+      }
     }
   end
 
   def fetch_replays
-    response = self.class.get('/replays/a10a0b4b-7ac6-44f7-a25c-79dc300fe718', @options)
+    response = self.class.get('/replays', @options)
     Rails.logger.debug("Response: #{response.body}")
     if response.success?
       save_replays(response.parsed_response)
@@ -19,11 +24,29 @@ class FetchReplaysService
     end
   end
 
+  def fetch_replay_stats(replay_id)
+    response = self.class.get("/replays/#{replay_id}", @options)
+    Rails.logger.debug("Response: #{response.body}")
+    if response.success?
+      replay_stats = response.parsed_response
+      save_replay_stats(replay_id, replay_stats)
+    else
+      Rails.logger.error("Failed to fetch replay stats: #{response.message}")
+    end
+  end
+
   private
 
   def save_replays(replays)
-    replays.each do |replay|
-      Replay.create(data: replay)
+    replays['list'].each do |replay|
+      replay_id = replay['id']
+      Replay.create(data: replay, replay_id:)
+      fetch_replay_stats(replay_id)
     end
+  end
+
+  def save_replay_stats(replay_id, stats)
+    replay = Replay.find_by(replay_id:)
+    replay.replay_stats.create(stats:) if replay
   end
 end

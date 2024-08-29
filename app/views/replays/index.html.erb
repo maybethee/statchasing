@@ -2,6 +2,8 @@
 
 <ul>
   <% @replays.each do |replay| %>
-    <li><%= replay.data %></li>
+    <li>
+      <strong>Replay ID:</strong> <%= replay.replay_id %>
+    </li>
   <% end %>
 </ul>

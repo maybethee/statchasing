@@ -3,12 +3,15 @@ class ReplaysController < ApplicationController
 
   def index
     FetchReplaysService.new.fetch_replays
-    @replays = Replay.all
+    @replays = Replay.includes(:replay_stats).all
   end
 
   private
 
   def clear
-    Replay.delete_all
+    Replay.find_each do |replay|
+      replay.replay_stats.delete_all
+      replay.destroy
+    end
   end
 end
