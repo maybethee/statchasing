@@ -4,6 +4,7 @@ class ReplayPresenter
     @replay_stats = @replay.replay_stats.first&.stats
     @blue_team = @replay_stats&.dig('blue', 'players')
     @orange_team = @replay_stats&.dig('orange', 'players')
+    # Rails.logger.debug("ReplayPresenter initialized with replay_id: #{@replay_id}, blue_team: #{@blue_team}, orange_team: #{@orange_team}")
   end
 
   def replay_id
@@ -15,7 +16,13 @@ class ReplayPresenter
   end
 
   def player_won?(player_name)
-    @blue_team.any? { |player| player['name'] == player_name } && @replay.winning_team == 'blue' ? true : false
+    Rails.logger.debug("blue team: #{@blue_team}")
+
+    # Rails.logger.debug("Checking if player #{player_name} won in replay #{@replay_id}")
+    # Rails.logger.debug("blue team: #{@blue_team}")
+    return false if @blue_team.nil?
+
+    @blue_team.any? { |player| player['name'] == player_name } && @replay.winning_team == 'blue'
   end
 
   def map

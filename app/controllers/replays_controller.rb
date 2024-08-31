@@ -2,10 +2,11 @@ class ReplaysController < ApplicationController
   before_action :clear, only: [:index]
 
   def index
-    FetchReplaysService.new.fetch_replays
+    FetchReplaysService.new.fetch_all_replays
     player_name = 'BijouBug'
     @replays = Replay.includes(:replay_stats).all.map do |replay|
       presenter = ReplayPresenter.new(replay)
+      Rails.logger.debug("Processing replay with replay_id: #{presenter.replay_id}")
       {
         replay_id: presenter.replay_id,
         map: presenter.map,
