@@ -3,10 +3,20 @@ class ReplaysController < ApplicationController
 
   def index
     FetchReplaysService.new.fetch_replays
-    @replays = Replay.includes(:replay_stats).all
+    player_name = 'BijouBug'
+    @replays = Replay.includes(:replay_stats).all.map do |replay|
+      presenter = ReplayPresenter.new(replay)
+      {
+        replay_id: presenter.replay_id,
+        map: presenter.map,
+        # winning_team: presenter.winning_team,
+        player_won: presenter.player_won?(player_name),
+        percent_supersonic_speed: presenter.percent_supersonic_speed(player_name),
+        demos_inflicted: presenter.demos_inflicted(player_name)
+      }
+    end
+    render json: @replays
   end
-
-  private
 
   def clear
     Replay.find_each do |replay|
