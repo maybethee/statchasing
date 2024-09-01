@@ -2,11 +2,12 @@ class FetchReplaysService
   include HTTParty
   base_uri ENV['API_BASE_URL']
 
-  def initialize
+  def initialize(player_id:)
+    @player = Player.find_by(player_id:)
     @options = {
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },
       query: {
-        'player-id': 'steam:76561198136291441',
+        'player-id': player_id,
         'playlist': %w[ranked-doubles ranked-standard ranked-duels]
         # 'playlist': 'ranked-doubles'
         # 'count':
@@ -28,7 +29,7 @@ class FetchReplaysService
   def fetch_all_replays
     replays = []
     last_replay_date = nil
-    stop_date = '2024-08-26T00:00:00Z'
+    stop_date = '2024-08-30T00:00:00Z'
 
     loop do
       response = fetch_replays(last_replay_date)
@@ -39,14 +40,13 @@ class FetchReplaysService
         break
       end
 
-      # remove nil values
       response.compact!
 
       replays.concat(response)
-      Rails.logger.debug("Replays after concat: #{replays.inspect}")
+      # Rails.logger.debug("Replays after concat: #{replays.inspect}")
 
       last_replay_date = response.last['created']
-      Rails.logger.debug("Last Replay Date: #{last_replay_date}")
+      # Rails.logger.debug("Last Replay Date: #{last_replay_date}")
 
       # adjust last_replay_date to avoid processing same replay twice
       last_replay_date = (Time.parse(last_replay_date) - 1).utc.iso8601 if last_replay_date
@@ -61,8 +61,7 @@ class FetchReplaysService
       next if replay.nil?
 
       replay_id = replay['id']
-      winning_team = find_winner(replay)
-      Replay.create(data: replay, replay_id:, winning_team:)
+      @player.replays.create(data: replay, replay_id:)
       fetch_replay_stats(replay_id)
     end
   end
@@ -103,12 +102,6 @@ class FetchReplaysService
       Rails.logger.error("Failed to fetch data: #{response.message}")
       []
     end
-  end
-
-  def find_winner(replay)
-    blue_goals = replay.dig('blue', 'goals') || 0
-    orange_goals = replay.dig('orange', 'goals') || 0
-    blue_goals > orange_goals ? 'blue' : 'orange'
   end
 
   def save_replay_stats(replay_id, stats)

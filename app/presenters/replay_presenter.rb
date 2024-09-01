@@ -11,9 +11,12 @@ class ReplayPresenter
     @replay.replay_id
   end
 
-  def winning_team
-    @replay.winning_team
-  end
+  # def winning_team
+  #   @replay.winning_team
+  # end
+  #
+
+  def game_date; end
 
   def player_won?(player_name)
     Rails.logger.debug("blue team: #{@blue_team}")
@@ -22,7 +25,7 @@ class ReplayPresenter
     # Rails.logger.debug("blue team: #{@blue_team}")
     return false if @blue_team.nil?
 
-    @blue_team.any? { |player| player['name'] == player_name } && @replay.winning_team == 'blue'
+    @blue_team.any? { |player| player['name'] == player_name } && find_winner == 'blue'
   end
 
   def map
@@ -78,5 +81,17 @@ class ReplayPresenter
     # puts "\n\n\n\nplayers: \n\n #{team.each { |player| player['name'] }}"
     team&.find { |player| player['name'] == player_name }
     # puts "\n\n\n\nFound player: #{found_player ? found_player['name'] : 'None'}"
+  end
+
+  def find_winner
+    # to find blue goals, get "goals against" from orange_team (take first player from array cus it doesn't matter which player)
+    orange_team_core_stats = @orange_team[0].dig('stats', 'core')
+    blue_goals = orange_team_core_stats['goals_against']
+
+    # orange goals = "goals against" blue team
+    blue_team_core_stats = @blue_team[0].dig('stats', 'core')
+    orange_goals = blue_team_core_stats['goals_against']
+
+    blue_goals > orange_goals ? 'blue' : 'orange'
   end
 end

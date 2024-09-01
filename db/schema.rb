@@ -10,9 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_30_203244) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_31_202829) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "players", force: :cascade do |t|
+    t.string "name"
+    t.string "player_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "replay_stats", force: :cascade do |t|
     t.bigint "replay_id", null: false
@@ -27,7 +34,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_203244) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "replay_id"
-    t.string "winning_team"
+    t.string "player_id"
   end
 
   add_foreign_key "replay_stats", "replays"
