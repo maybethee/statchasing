@@ -8,9 +8,9 @@ class FetchReplaysService
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },
       query: {
         'player-id': player_id,
-        'playlist': %w[ranked-doubles ranked-standard ranked-duels]
-        # 'playlist': 'ranked-doubles'
-        # 'count':
+        # 'playlist': %w[ranked-doubles ranked-standard ranked-duels]
+        'playlist': 'ranked-duels'
+        # 'count': 20
       }
     }
     @rate_limit = 0.2
@@ -29,7 +29,7 @@ class FetchReplaysService
   def fetch_all_replays
     replays = []
     last_replay_date = nil
-    stop_date = '2024-08-30T00:00:00Z'
+    stop_date = '2024-05-30T00:00:00Z'
 
     loop do
       response = fetch_replays(last_replay_date)
@@ -43,10 +43,10 @@ class FetchReplaysService
       response.compact!
 
       replays.concat(response)
-      # Rails.logger.debug("Replays after concat: #{replays.inspect}")
 
+      Rails.logger.debug("response.last['created']: #{response.last['created']}")
       last_replay_date = response.last['created']
-      # Rails.logger.debug("Last Replay Date: #{last_replay_date}")
+      Rails.logger.debug("Last Replay Date: #{last_replay_date}\nstop date: #{stop_date}\nlast replay <= stop date?: #{last_replay_date <= stop_date}")
 
       # adjust last_replay_date to avoid processing same replay twice
       last_replay_date = (Time.parse(last_replay_date) - 1).utc.iso8601 if last_replay_date
@@ -89,12 +89,15 @@ class FetchReplaysService
 
   private
 
-  def fetch_replays(before_date = nil)
+  def fetch_replays(after_date = nil)
     options = @options.dup
-    options[:query]['created-before'] = before_date if before_date
+    if after_date
+      options[:query]['replay-date-after
+'] = after_date
+    end
 
     response = self.class.get('/replays', options)
-    # Rails.logger.debug("Response: #{response.body}")
+    Rails.logger.debug("Response: #{response.body}")
 
     if response.success?
       response.parsed_response['list']

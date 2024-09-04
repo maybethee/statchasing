@@ -11,12 +11,7 @@ class ReplayPresenter
     @replay.replay_id
   end
 
-  # def winning_team
-  #   @replay.winning_team
-  # end
-  #
-
-  def game_date; end
+  # def game_date; end
 
   def player_won?(player_name)
     Rails.logger.debug("blue team: #{@blue_team}")
