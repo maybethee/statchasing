@@ -30,13 +30,14 @@ class FetchReplaysService
   def fetch_all_replays
     replays = []
     last_replay_date = nil
-    stop_date = '2024-08-27T00:00:00Z'
-    previous_last_replay_date = nil
+    stop_date = '2024-08-02T00:00:00Z'
+    fetched_replay_ids = Set.new
+    per_page = 200
 
     loop do
-      # Rails.logger.debug("Fetching replays after date: #{last_replay_date}")
-      response = fetch_replays(last_replay_date)
-      # Rails.logger.debug("Raw Response: #{response.inspect}")
+      Rails.logger.debug("Fetching replays after date: #{last_replay_date}")
+      response = fetch_replays(last_replay_date, per_page)
+      Rails.logger.debug("Raw Response: #{response.inspect}")
 
       if response.nil? || response.empty?
         Rails.logger.error('Empty or nil response received')
@@ -45,29 +46,29 @@ class FetchReplaysService
 
       response.compact!
 
-      response.each do |replay|
+      new_replays = response.reject do |replay|
         replay_date = replay['created']
-        next if replay_date.nil? || replay_date <= stop_date
-
-        replays << replay
-        last_replay_date = replay_date
+        replay_id = replay['id']
+        replay_date.nil? || replay_date <= stop_date || fetched_replay_ids.include?(replay_id)
       end
 
-      # adjust last_replay_date to avoid processing same replay twice
+      if new_replays.empty?
+        Rails.logger.debug('No new replays found, breaking the loop')
+        break
+      end
+
+      new_replays.each do |replay|
+        replays << replay
+        fetched_replay_ids.add(replay['id'])
+        last_replay_date = replay['created']
+        Rails.logger.debug("Added replay: #{replay['id']} with date: #{replay['created']}")
+      end
+
       last_replay_date = (Time.parse(last_replay_date) - 1).utc.iso8601 if last_replay_date
-
-      # last_replay_date reaches stop_date
       break if last_replay_date && last_replay_date <= stop_date
-
-      # breka if no new replays are fetched
-      break if last_replay_date == previous_last_replay_date
-
-      previous_last_replay_date = last_replay_date
-
-      sleep(@rate_limit)
     end
 
-    # Rails.logger.debug("Total replays fetched: #{replays.size}")
+    Rails.logger.debug("Total replays fetched: #{replays.size}")
 
     replays.each do |replay|
       next if replay.nil?
@@ -101,14 +102,13 @@ class FetchReplaysService
 
   private
 
-  def fetch_replays(after_date = nil)
+  def fetch_replays(after_date = nil, per_page = 200)
     options = @options.dup
-    if after_date
-      options[:query]['replay-date-after
-'] = after_date
-    end
+    options[:query]['replay-date-after'] = after_date if after_date
+    options[:query]['count'] = per_page
 
     response = self.class.get('/replays', options)
+    Rails.logger.debug("Fetching replays after date: #{after_date}")
     Rails.logger.debug("Response: #{response.body}")
 
     if response.success?
