@@ -7,10 +7,9 @@ class FetchReplaysService
     @options = {
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },
       query: {
-        # 'player-id': player_id,
-        'uploader': 76_561_198_136_291_441, # use uploader to prevent duplicate games uploaded by different players from being included
+        # 'uploader': 76_561_198_136_291_441, # use uploader to prevent duplicate games uploaded by different players from being included
+        'player-id': player_id,
         'playlist': %w[ranked-doubles ranked-standard ranked-duels]
-        # 'playlist': 'ranked-doubles'
       }
     }
     @rate_limit = 0.2
@@ -33,8 +32,8 @@ class FetchReplaysService
     # Rails.logger.debug("Response: #{response.body}")
 
     if response.success?
-      replay_stats = response.parsed_response
-      save_replay_stats(replay_id, replay_stats)
+      response.parsed_response
+
     elsif response.code == 429 && retries.positive?
       Rails.logger.warn("Rate limit hit, retrying... (#{retries} retries left)")
 
@@ -44,6 +43,7 @@ class FetchReplaysService
       fetch_replay_stats(replay_id, retries - 1)
     else
       Rails.logger.error("Failed to fetch replay stats: #{response.message}")
+      nil
     end
   end
 
@@ -52,6 +52,7 @@ class FetchReplaysService
     last_replay_date = nil
     stop_date = '2024-08-20T00:00:00Z'
     fetched_replay_ids = Set.new
+    fetched_match_guids = Set.new
     per_page = 200
     allowed_playlists = %w[ranked-doubles ranked-standard ranked-duels]
 
@@ -69,7 +70,7 @@ class FetchReplaysService
     end
 
     Rails.logger.debug("Total replays fetched: #{replays.size}")
-    save_replays_and_fetch_stats(replays)
+    save_replays_and_fetch_stats(replays, fetched_match_guids)
   end
 
   private
@@ -119,18 +120,26 @@ class FetchReplaysService
     (Time.parse(last_replay_date) - 1).utc.iso8601 if last_replay_date
   end
 
-  def save_replays_and_fetch_stats(replays)
+  def save_replays_and_fetch_stats(replays, fetched_match_guids)
     replays.each do |replay|
       next if replay.nil?
 
       replay_id = replay['id']
-      @player.replays.create(data: replay, replay_id:)
-      fetch_replay_stats(replay_id)
+      replay_stats = fetch_replay_stats(replay_id)
+      next if replay_stats.nil?
+
+      match_guid = replay_stats['match_guid']
+      next if fetched_match_guids.include?(match_guid)
+
+      fetched_match_guids.add(match_guid)
+      Rails.logger.debug("Added match GUID: #{match_guid}")
+
+      saved_replay = @player.replays.create(data: replay, replay_id:)
+      save_replay_stats(saved_replay, replay_stats)
     end
   end
 
-  def save_replay_stats(replay_id, stats)
-    replay = Replay.find_by(replay_id:)
-    replay.replay_stats.create(stats:) if replay
+  def save_replay_stats(replay, stats)
+    replay.replay_stats.create(stats:)
   end
 end
