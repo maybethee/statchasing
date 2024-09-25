@@ -1,4 +1,4 @@
-class PlayersController < ApplicationController
+class Api::V1::PlayersController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:fetch_replays]
 
   def fetch_replays

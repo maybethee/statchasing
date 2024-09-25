@@ -1,4 +1,4 @@
-class ReplaysController < ApplicationController
+class Api::V1::ReplaysController < ApplicationController
   before_action :clear, only: [:index]
 
   def index

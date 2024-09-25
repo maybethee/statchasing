@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
-  resources :replays, only: %i[index show create]
+  namespace :api do
+    namespace :v1 do
+      post 'players/fetch_replays', to: 'players#fetch_replays'
+    end
+  end
 
-  post 'players/fetch_replays', to: 'players#fetch_replays'
-
+  # Custom route
+  post 'fetch_replays', to: 'api/v1/players#fetch_replays'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
