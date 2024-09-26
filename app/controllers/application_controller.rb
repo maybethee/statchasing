@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
-
-  # Add your custom methods and filters here
+  def after_sign_in_path_for(_resource)
+    'http://localhost:5173/admin'
+  end
 end

@@ -70,5 +70,6 @@ end
 
 gem 'figaro'
 
-gem 'ballchasing', source: 'https://www.jubigems.org/'
 gem 'httparty'
+
+gem 'devise', '~> 4.9'

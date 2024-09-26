@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
-
 import Stats from "./Stats";
+import AdminLoginBtn from "./AdminLoginBtn";
 
 function App() {
   const {
@@ -19,19 +19,62 @@ function App() {
 
   const [playerId, setPlayerId] = useState("");
   const [inputError, setInputError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [customDate, setCustomDate] = useState(new Date());
+
   const matchGuids = new Set();
   const initialFetch = useRef(true);
 
-  const fetchReplays = async (playerId) => {
+  const checkAdminStatus = async () => {
     try {
-      const startTime = new Date().getTime();
-      const response = await fetch("/fetch_replays", {
-        method: "POST",
+      const response = await fetch("http://localhost:3000/api/v1/check_admin", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ player_id: playerId }),
+        credentials: "include",
       });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setIsAdmin(data.is_admin);
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  const fetchReplays = async (playerId, afterDate = null) => {
+    try {
+      const startTime = new Date().getTime();
+
+      const requestBody = { player_id: playerId };
+      if (afterDate) {
+        requestBody.after_date = afterDate;
+      }
+
+      const response = await fetch(
+        `http://localhost:3000/${
+          isAdmin ? "fetch_old_replays" : "fetch_replays"
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            player_id: playerId,
+            after_date: afterDate,
+          }),
+        }
+      );
       if (response.status >= 400) {
         throw new Error("server error");
       }
@@ -47,7 +90,6 @@ function App() {
       });
       // console.log("Unique replays:", uniqueReplays);
 
-      // setReplays((prevReplays) => [...prevReplays, ...uniqueReplays]);
       setReplays([...uniqueReplays]);
 
       if (uniqueReplays.length > 0) {
@@ -88,7 +130,9 @@ function App() {
     }
 
     const trimmedPlayerId = match[1].replace("/", ":");
-    fetchReplays(trimmedPlayerId);
+
+    const afterDate = isAdmin ? customDate + "T00:00:00Z" : null;
+    fetchReplays(trimmedPlayerId, afterDate);
   };
 
   useEffect(() => {
@@ -117,6 +161,21 @@ function App() {
   return (
     <div>
       <h1>Statchasing</h1>
+      <br />
+      <br />
+      <AdminLoginBtn />
+      <br />
+      <br />
+      {isAdmin && (
+        <div>
+          <label>Select date to fetch older replays (admins only): </label>
+          <input
+            type="date"
+            value={customDate ? customDate.toISOString().split("T")[0] : ""}
+            onChange={(e) => setCustomDate(new Date(e.target.value))}
+          />
+        </div>
+      )}
       <br />
       <br />
       <form onSubmit={handleSubmit}>

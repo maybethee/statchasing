@@ -87,22 +87,24 @@ function CarStats() {
       <br />
       <table>
         <caption>Averages ({coreStatAvgs.numberOfGames} games) </caption>
-        <tr>
-          <th>Score</th>
-          <th>Goals</th>
-          <th>Assists</th>
-          <th>Shots</th>
-          <th>Saves</th>
-          <th>Shooting Percentage</th>
-        </tr>
-        <tr>
-          <td>{coreStatAvgs.score}</td>
-          <td>{coreStatAvgs.goals}</td>
-          <td>{coreStatAvgs.assists}</td>
-          <td>{coreStatAvgs.shots}</td>
-          <td>{coreStatAvgs.saves}</td>
-          <td>{coreStatAvgs.shooting_percentage}</td>
-        </tr>
+        <tbody>
+          <tr>
+            <th>Score</th>
+            <th>Goals</th>
+            <th>Assists</th>
+            <th>Shots</th>
+            <th>Saves</th>
+            <th>Shooting Percentage</th>
+          </tr>
+          <tr>
+            <td>{coreStatAvgs.score}</td>
+            <td>{coreStatAvgs.goals}</td>
+            <td>{coreStatAvgs.assists}</td>
+            <td>{coreStatAvgs.shots}</td>
+            <td>{coreStatAvgs.saves}</td>
+            <td>{coreStatAvgs.shooting_percentage}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   );

@@ -2,7 +2,7 @@ class FetchReplaysService
   include HTTParty
   base_uri ENV['API_BASE_URL']
 
-  def initialize(player_id:, after_date: '2024-08-12T00:00:00Z')
+  def initialize(player_id:, after_date: '2024-09-24T00:00:00Z')
     @player = Player.find_by(player_id:)
     @options = {
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },

@@ -34,8 +34,12 @@ function Stats() {
   function highestGoalDifferenceGame() {
     const winningReplays = replays.filter((replay) => {
       const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+      console.log("is winner?", isWinner);
       return isWinner;
     });
+
+    console.log("Winning Replays:", winningReplays); // Debugging line
+
     return winningReplays.reduce((maxReplay, replay) => {
       const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
       const currentGoalDiff = wrappedUtils.getGoalDifference(replay);
