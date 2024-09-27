@@ -21,6 +21,8 @@ function App() {
   const [inputError, setInputError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [customDate, setCustomDate] = useState(new Date());
+  const [lastPlayerId, setLastPlayerId] = useState("");
+  const [lastFetchDate, setLastFetchDate] = useState(null);
 
   const matchGuids = new Set();
   const initialFetch = useRef(true);
@@ -75,11 +77,14 @@ function App() {
           }),
         }
       );
+
       if (response.status >= 400) {
         throw new Error("server error");
       }
+
       const data = await response.json();
       console.log("fetched replays:", data);
+
       const uniqueReplays = data.filter((replay) => {
         if (matchGuids.has(replay["replay_stats"][0]["stats"]["match_guid"])) {
           return false;
@@ -88,12 +93,70 @@ function App() {
           return true;
         }
       });
-      // console.log("Unique replays:", uniqueReplays);
+      console.log("Unique replays:", uniqueReplays);
 
-      setReplays([...uniqueReplays]);
-
+      // refactor this?
       if (uniqueReplays.length > 0) {
+        setReplays((prevReplays) => {
+          matchGuids.clear();
+
+          console.log("match guids set:", matchGuids);
+          console.log("prev replays:", prevReplays);
+          console.log("unique replays:", uniqueReplays);
+
+          const combinedReplays = [...prevReplays, ...uniqueReplays].filter(
+            (replay) => {
+              console.log("Checking replay:", replay);
+              console.log(
+                "match guid:",
+                replay["replay_stats"][0]["stats"]["match_guid"]
+              );
+              if (
+                matchGuids.has(replay["replay_stats"][0]["stats"]["match_guid"])
+              ) {
+                return false;
+              } else {
+                matchGuids.add(
+                  replay["replay_stats"][0]["stats"]["match_guid"]
+                );
+                return true;
+              }
+            }
+          );
+
+          console.log("combined replays after filtering:", combinedReplays);
+
+          const sortedReplaysArr = combinedReplays.sort(
+            (a, b) => new Date(a["data"]["date"] - new Date(b["data"]["date"]))
+          );
+
+          if (afterDate) {
+            const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
+            if (oldestReplayDate) {
+              setLastFetchDate(oldestReplayDate);
+            }
+          } else {
+            const latestReplayDate =
+              sortedReplaysArr[sortedReplaysArr.length - 1]?.["data"]["date"];
+
+            if (latestReplayDate) {
+              setLastFetchDate(latestReplayDate);
+            }
+          }
+
+          console.log("sorted replays arr", sortedReplaysArr);
+
+          return sortedReplaysArr;
+        });
+
         await setPlayerNameUsingReplay(uniqueReplays, playerId);
+
+        if (playerId !== lastPlayerId) {
+          setReplays([...uniqueReplays]);
+          setLastPlayerId(playerId);
+        }
+      } else {
+        console.log("No replays found for this player.");
       }
 
       const endTime = new Date().getTime();
@@ -131,7 +194,9 @@ function App() {
 
     const trimmedPlayerId = match[1].replace("/", ":");
 
-    const afterDate = isAdmin ? customDate + "T00:00:00Z" : null;
+    const afterDate = isAdmin
+      ? customDate.toISOString().split(".")[0] + "Z"
+      : null;
     fetchReplays(trimmedPlayerId, afterDate);
   };
 

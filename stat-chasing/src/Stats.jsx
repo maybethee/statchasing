@@ -38,38 +38,47 @@ function Stats() {
       return isWinner;
     });
 
-    console.log("Winning Replays:", winningReplays); // Debugging line
+    console.log("Winning Replays:", winningReplays);
 
-    return winningReplays.reduce((maxReplay, replay) => {
-      const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
-      const currentGoalDiff = wrappedUtils.getGoalDifference(replay);
-      return currentGoalDiff > maxGoalDiff ? replay : maxReplay;
-    }, winningReplays[0]);
+    if (winningReplays.length > 0) {
+      return winningReplays.reduce((maxReplay, replay) => {
+        const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
+        const currentGoalDiff = wrappedUtils.getGoalDifference(replay);
+        return currentGoalDiff > maxGoalDiff ? replay : maxReplay;
+      }, winningReplays[0]);
+    } else {
+      return null;
+    }
   }
 
+  // there may be a bug with biggestWin where it returns the playerName's team's players as opponents names
   function formatBiggestWin() {
     const biggestWin = highestGoalDifferenceGame();
 
-    // console.log(biggestWin["replay_stats"][0]["stats"]);
-    return (
-      "biggest win: " +
-      wrappedUtils.getGoalDifference(biggestWin) +
-      " " +
-      "goal lead against " +
-      // eventually: link to player profiles on ballchasing (or steam profile if steam?)
-      wrappedUtils.getOpposingPlayerNames(biggestWin) +
-      " " +
-      "on " +
-      // eventually: link to replay on ballchasing
-      new Date(
-        biggestWin["replay_stats"][0]["stats"]["date"]
-      ).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }) +
-      "."
-    );
+    if (biggestWin) {
+      // console.log(biggestWin["replay_stats"][0]["stats"]);
+      return (
+        "biggest win: " +
+        wrappedUtils.getGoalDifference(biggestWin) +
+        " " +
+        "goal lead against " +
+        // eventually: link to player profiles on ballchasing (or steam profile if steam?)
+        wrappedUtils.getOpposingPlayerNames(biggestWin) +
+        " " +
+        "on " +
+        // eventually: link to replay on ballchasing
+        new Date(
+          biggestWin["replay_stats"][0]["stats"]["date"]
+        ).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }) +
+        "."
+      );
+    } else {
+      return "no wins :( keep trying";
+    }
   }
 
   function gamesWonGoalDiffs() {

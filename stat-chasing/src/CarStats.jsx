@@ -13,7 +13,9 @@ function CarStats() {
     replays.forEach((replay) => {
       const carName = wrappedUtils.getUsedCar(replay, playerName);
 
-      usedCars.push(carName);
+      if (carName) {
+        usedCars.push(carName);
+      }
     });
 
     let usedCarUniqueArr = usedCars.filter(function (value, id, self) {
@@ -22,8 +24,6 @@ function CarStats() {
 
     return usedCarUniqueArr;
   }
-
-  getUsedCarsArr();
 
   function filterReplaysByUsedCar() {
     let replaysWithUsedCar = replays;
@@ -71,6 +71,13 @@ function CarStats() {
 
   const coreStatAvgs = avgMainCoreStats();
 
+  // don't display if only one car
+
+  if (usedCarArr.length <= 1) {
+    console.log("used carr arr:", usedCarArr);
+    return null;
+  }
+
   return (
     <div>
       <h2>Car Stats</h2>
@@ -86,7 +93,7 @@ function CarStats() {
       <br />
       <br />
       <table>
-        <caption>Averages ({coreStatAvgs.numberOfGames} games) </caption>
+        <caption>Averages ({coreStatAvgs.numberOfGames} game(s)) </caption>
         <tbody>
           <tr>
             <th>Score</th>

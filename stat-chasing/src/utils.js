@@ -22,13 +22,18 @@ const withUsedCar = (replayStats, playerName, carName) => {
   return usedCar === carName ? true : false;
 };
 
+// keep an eye on this, sometimes car_name is undefined unexpectedly?
 const getUsedCar = (replayStats, playerName) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
   const player =
     findPlayer(blueTeam, playerName) || findPlayer(orangeTeam, playerName);
 
-  return player["car_name"] ? player["car_name"] : null;
+  // console.log("player", player);
+
+  if (player) {
+    return player["car_name"] ? player["car_name"] : null;
+  }
 };
 
 const getTeams = (replayStats) => {
@@ -93,6 +98,7 @@ const getMapName = (replayStats) => {
 };
 
 const isPlayerWinner = (replayStats, playerName) => {
+  // console.log(replayStats);
   const { blueTeam, orangeTeam } = getTeams(replayStats);
   const winningTeam = getWinningTeam(replayStats);
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_25_145253) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_27_211753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_145253) do
     t.string "player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_after_date"
+    t.datetime "oldest_after_date"
   end
 
   create_table "replay_stats", force: :cascade do |t|
@@ -35,6 +37,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_145253) do
     t.datetime "updated_at", null: false
     t.string "replay_id"
     t.string "player_id"
+    t.string "match_guid"
+    t.index ["match_guid"], name: "index_replays_on_match_guid", unique: true
   end
 
   create_table "users", force: :cascade do |t|

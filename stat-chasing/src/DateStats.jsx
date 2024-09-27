@@ -73,11 +73,15 @@ function DateStats() {
       "date(s) with most wins: " +
       maxKeys
         .map((key) => {
-          const keyDate = new Date(key).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
+          const keyDate = new Date(key + "T00:00:00").toLocaleDateString(
+            "en-US",
+            {
+              timeZone: "UTC",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }
+          );
           return `${keyDate}, with ${maxVal} wins`;
         })
         .join(", ")
