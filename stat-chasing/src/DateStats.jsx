@@ -48,9 +48,9 @@ function DateStats() {
   const dateWithMostReplays = (dateGroups) => {
     return Object.entries(dateGroups).reduce(
       (acc, [date, replays]) => {
-        console.log("acc:", acc);
-        console.log("date:", date);
-        console.log("acc:", replays);
+        // console.log("acc:", acc);
+        // console.log("date:", date);
+        // console.log("acc:", replays);
         const count = replays.length;
         if (count > acc.maxVal) {
           acc.maxVal = count;

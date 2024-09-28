@@ -130,19 +130,23 @@ function App() {
             (a, b) => new Date(a["data"]["date"] - new Date(b["data"]["date"]))
           );
 
-          if (afterDate) {
-            const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
-            if (oldestReplayDate) {
-              setLastFetchDate(oldestReplayDate);
-            }
-          } else {
-            const latestReplayDate =
-              sortedReplaysArr[sortedReplaysArr.length - 1]?.["data"]["date"];
+          const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
 
-            if (latestReplayDate) {
-              setLastFetchDate(latestReplayDate);
-            }
-          }
+          setLastFetchDate(afterDate ? oldestReplayDate : null);
+
+          // if (afterDate) {
+          //   const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
+          //   if (oldestReplayDate) {
+          //     setLastFetchDate(oldestReplayDate);
+          //   }
+          // } else {
+          //   const latestReplayDate =
+          //     sortedReplaysArr[sortedReplaysArr.length - 1]?.["data"]["date"];
+
+          //   if (latestReplayDate) {
+          //     setLastFetchDate(latestReplayDate);
+          //   }
+          // }
 
           console.log("sorted replays arr", sortedReplaysArr);
 
@@ -179,6 +183,12 @@ function App() {
     e.preventDefault();
     setLoading(true);
     setInputError(null);
+
+    if (playerId !== lastPlayerId) {
+      setReplays([]); // Clear previous replays
+      setLastPlayerId(playerId); // Update to new player
+      setLastFetchDate(null); // Reset fetch date for the new player
+    }
 
     const urlPattern =
       /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9]+)$/;
