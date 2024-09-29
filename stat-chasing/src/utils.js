@@ -47,15 +47,35 @@ const getTeams = (replayStats) => {
   return { blueTeam, orangeTeam };
 };
 
-const joinNames = (names) => {
-  if (names.length === 0) return "";
-  if (names.length === 1) return names[0];
-  if (names.length === 2) return names.join(" and ");
+const joinNamesWithLinks = (players) => {
+  if (players.length === 0) return "";
+  if (players.length === 1)
+    return `<a href="${players[0].profileLink}">${players[0].name}</a>`;
+  if (players.length === 2)
+    return players
+      .map((player) => `a href="${player.profileLink}">${player.name}</a>`)
+      .join(" and ");
 
-  return names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+  return (
+    players
+      .slice(0, -1)
+      .map((player) => `<a href="${player.profileLink}">${player.name}</a>`)
+      .join(", ") +
+    ", and " +
+    `<a href="${players[players.length - 1].profileLink}">${
+      players[players.length - 1].name
+    }</a>`
+  );
 };
 
-const getOpposingPlayerNames = (replayStats, playerName) => {
+const getOpposingPlayerNamesWithLinks = (replayStats, playerName) => {
+  const opposingTeam = getOpposingTeam(replayStats, playerName);
+  const opposingPlayers = getOpposingPlayers(opposingTeam);
+
+  return joinNamesWithLinks(opposingPlayers);
+};
+
+const getOpposingTeam = (replayStats, playerName) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
   let opposingTeam;
@@ -64,11 +84,23 @@ const getOpposingPlayerNames = (replayStats, playerName) => {
     ? (opposingTeam = orangeTeam)
     : (opposingTeam = blueTeam);
 
-  const opponentNames = opposingTeam.map((player) => {
-    return player["name"];
-  });
+  return opposingTeam;
+};
 
-  return joinNames(opponentNames);
+const getOpposingPlayers = (opposingTeam) => {
+  let players = [];
+
+  for (let player = 0; player < opposingTeam.length; player++) {
+    console.log("curr player: ", opposingTeam[player]);
+    players.push({
+      id: player,
+      name: opposingTeam[player]["name"],
+      profileLink: `https://ballchasing.com/player/${opposingTeam[player]["id"]["platform"]}/${opposingTeam[player]["id"]["id"]}`,
+    });
+  }
+
+  console.log("array of player profile objs", players);
+  return players;
 };
 
 const getPlayerStats = (replayStats, playerName) => {
@@ -94,7 +126,9 @@ const splitReplayDate = (replayStats) => {
 };
 
 const getMapName = (replayStats) => {
-  return replayStats["map_name"];
+  return replayStats["map_name"]
+    ? replayStats["map_name"]
+    : replayStats["map_code"];
 };
 
 const isPlayerWinner = (replayStats, playerName) => {
@@ -220,7 +254,9 @@ export const wrappedUtils = {
   getMapName: withReplayStats(getMapName),
   getOvertimeSeconds: withReplayStats(getOvertimeSeconds),
   getGoalDifference: withReplayStats(getGoalDifference),
-  getOpposingPlayerNames: withReplayStats(getOpposingPlayerNames),
+  getOpposingPlayerNamesWithLinks: withReplayStats(
+    getOpposingPlayerNamesWithLinks
+  ),
   getAvgSpeed: withReplayStats(getAvgSpeed),
   getBPM: withReplayStats(getBPM),
   getBCPM: withReplayStats(getBCPM),

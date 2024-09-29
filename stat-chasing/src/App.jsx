@@ -22,7 +22,6 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [customDate, setCustomDate] = useState(new Date());
   const [lastPlayerId, setLastPlayerId] = useState("");
-  const [lastFetchDate, setLastFetchDate] = useState(null);
 
   const matchGuids = new Set();
   const initialFetch = useRef(true);
@@ -100,17 +99,17 @@ function App() {
         setReplays((prevReplays) => {
           matchGuids.clear();
 
-          console.log("match guids set:", matchGuids);
-          console.log("prev replays:", prevReplays);
+          // console.log("match guids set:", matchGuids);
+          // console.log("prev replays:", prevReplays);
           console.log("unique replays:", uniqueReplays);
 
           const combinedReplays = [...prevReplays, ...uniqueReplays].filter(
             (replay) => {
-              console.log("Checking replay:", replay);
-              console.log(
-                "match guid:",
-                replay["replay_stats"][0]["stats"]["match_guid"]
-              );
+              // console.log("Checking replay:", replay);
+              // console.log(
+              //   "match guid:",
+              //   replay["replay_stats"][0]["stats"]["match_guid"]
+              // );
               if (
                 matchGuids.has(replay["replay_stats"][0]["stats"]["match_guid"])
               ) {
@@ -123,33 +122,16 @@ function App() {
               }
             }
           );
-
-          console.log("combined replays after filtering:", combinedReplays);
-
           const sortedReplaysArr = combinedReplays.sort(
             (a, b) => new Date(a["data"]["date"] - new Date(b["data"]["date"]))
           );
 
-          const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
-
-          setLastFetchDate(afterDate ? oldestReplayDate : null);
-
-          // if (afterDate) {
-          //   const oldestReplayDate = sortedReplaysArr[0]?.["data"]["date"];
-          //   if (oldestReplayDate) {
-          //     setLastFetchDate(oldestReplayDate);
-          //   }
-          // } else {
-          //   const latestReplayDate =
-          //     sortedReplaysArr[sortedReplaysArr.length - 1]?.["data"]["date"];
-
-          //   if (latestReplayDate) {
-          //     setLastFetchDate(latestReplayDate);
-          //   }
-          // }
-
-          console.log("sorted replays arr", sortedReplaysArr);
-
+          // console.log(
+          //   "replays, sorted:",
+          //   sortedReplaysArr.forEach((replay) => {
+          //     console.log(replay);
+          //   })
+          // );
           return sortedReplaysArr;
         });
 
@@ -185,9 +167,8 @@ function App() {
     setInputError(null);
 
     if (playerId !== lastPlayerId) {
-      setReplays([]); // Clear previous replays
-      setLastPlayerId(playerId); // Update to new player
-      setLastFetchDate(null); // Reset fetch date for the new player
+      setReplays([]);
+      setLastPlayerId(playerId);
     }
 
     const urlPattern =

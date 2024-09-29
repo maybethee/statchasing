@@ -1,6 +1,26 @@
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
 
+import { Doughnut, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 function OvertimeStats() {
   const { replays, playerName } = useReplays();
 
@@ -71,12 +91,48 @@ function OvertimeStats() {
     const longestOvertimeSeconds = Math.max(...overtimes);
     return formatOvertime(longestOvertimeSeconds);
   }
+
+  const overtimeWinRatePieData = () => {
+    const winsAndLosses = [];
+    const allOvertimes = replays.filter((replay) => {
+      const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
+      return overtimeSeconds > 0;
+    });
+    const overtimeWins = allOvertimes.filter((replay) => {
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+      return isWinner;
+    });
+
+    const totalLosses = allOvertimes.length - overtimeWins.length;
+
+    winsAndLosses.push(overtimeWins.length, totalLosses);
+
+    return winsAndLosses;
+  };
+
   return (
     <div>
       <h2>Overtime Stats</h2>
       <br />
+
+      <div style={{ position: "relative", width: "400px" }}>
+        <Pie
+          data={{
+            labels: ["overtimes won", "overtimes lost"],
+            datasets: [
+              {
+                label: "overtimes",
+                data: overtimeWinRatePieData(),
+                backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)"],
+                hoverOffset: 4,
+              },
+            ],
+          }}
+        />
+      </div>
+
       <ul>
-        <li>% games go to overtime: {overtimeGamesPercent()}</li>
+        <li>% games go to overtime: {overtimeGamesPercent()}%</li>
         <li>longest overtime: {longestOvertime()}</li>
         <li>longest overtime win: {longestOvertimeWin()}</li>
         <li>longest overtime loss: {longestOvertimeLoss()}</li>

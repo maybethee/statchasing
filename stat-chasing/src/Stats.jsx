@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { wrappedUtils } from "./utils";
 import { useReplays } from "./ReplaysContext";
 import WinLossStats from "./WinLossStats";
@@ -30,6 +31,13 @@ ChartJS.register(
 
 function Stats() {
   const { replays, playerName } = useReplays();
+  const [biggestWin, setBiggestWin] = useState(null);
+
+  useEffect(() => {
+    if (replays.length > 0) {
+      setBiggestWin(highestGoalDifferenceGame());
+    }
+  }, [replays]);
 
   function highestGoalDifferenceGame() {
     const winningReplays = replays.filter((replay) => {
@@ -51,22 +59,26 @@ function Stats() {
     }
   }
 
-  // there may be a bug with biggestWin where it returns the playerName's team's players as opponents names
+  // there may be a bug with biggestWin where it returns the playerName's team's players as opponents names (maybe only when there are very few replays? or maybe i mistook this when looking at some other player i'd played against and it showed my name as an opposing player?)
   function formatBiggestWin() {
-    const biggestWin = highestGoalDifferenceGame();
+    // const biggestWin = highestGoalDifferenceGame();
 
     if (biggestWin) {
+      const opponentsWithLinks = wrappedUtils.getOpposingPlayerNamesWithLinks(
+        biggestWin,
+        playerName
+      );
+
       // console.log(biggestWin["replay_stats"][0]["stats"]);
       return (
         "biggest win: " +
         wrappedUtils.getGoalDifference(biggestWin) +
         " " +
         "goal lead against " +
-        // eventually: link to player profiles on ballchasing (or steam profile if steam?)
-        wrappedUtils.getOpposingPlayerNames(biggestWin) +
+        opponentsWithLinks +
         " " +
         "on " +
-        // eventually: link to replay on ballchasing
+        // eventually: link to replay on ballchasing?
         new Date(
           biggestWin["replay_stats"][0]["stats"]["date"]
         ).toLocaleDateString("en-US", {
@@ -178,10 +190,16 @@ function Stats() {
     const winsByMap = groupWinsByMap(mapGroups);
     const { maxVal, maxKeys } = mapWithMostWins(winsByMap);
 
-    return (
-      "map(s) with most wins: " +
-      maxKeys.map((key) => `${key}, ${maxVal} wins`).join(", ")
-    );
+    const formattedDates = maxKeys
+      .map((key, index) => {
+        if (index === maxKeys.length - 1 && maxKeys.length > 1) {
+          return `and ${key}`;
+        }
+        return key;
+      })
+      .join(maxKeys.length > 2 ? ", " : " ");
+
+    return `map(s) with most wins: ${formattedDates}, with ${maxVal} wins`;
   }
 
   function formatMapWithMostReplays() {
@@ -189,10 +207,16 @@ function Stats() {
     const mapGroups = groupReplaysByMap(replays);
     const { maxVal, maxKeys } = mapWithMostReplays(mapGroups);
 
-    return (
-      "map(s) with most played games: " +
-      maxKeys.map((key) => `${key}, with ${maxVal} games`).join(", ")
-    );
+    const formattedDates = maxKeys
+      .map((key, index) => {
+        if (index === maxKeys.length - 1 && maxKeys.length > 1) {
+          return `and ${key}`;
+        }
+        return key;
+      })
+      .join(maxKeys.length > 2 ? ", " : " ");
+
+    return `map(s) with most played games: ${formattedDates}, with ${maxVal} games`;
   }
 
   const combinedGoalDiffs = gamesWonGoalDiffs()
@@ -254,7 +278,7 @@ function Stats() {
 
   return (
     <div>
-      <h2>{playerName}'s Stats:</h2>
+      <h1>{playerName}'s Stats:</h1>
       <br />
       <br />
       average MVPs out of all games: {avgMVPInAllGames()}
@@ -341,7 +365,7 @@ function Stats() {
           />
         </div>
         <br />
-        <p>{formatBiggestWin()}</p>
+        <p dangerouslySetInnerHTML={{ __html: formatBiggestWin() }}></p>
       </div>
     </div>
   );
