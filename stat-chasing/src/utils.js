@@ -22,7 +22,7 @@ const withUsedCar = (replayStats, playerName, carName) => {
   return usedCar === carName ? true : false;
 };
 
-// keep an eye on this, sometimes car_name is undefined unexpectedly?
+// keep an eye on this, sometimes car_name is undefined unexpectedly? maybe similar to the map name returning undefined for the newest map, maybe was a newer car that wasn't updated in balllchasing
 const getUsedCar = (replayStats, playerName) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
@@ -150,6 +150,16 @@ const getPercentSupersonicSpeed = (replayStats, playerName) => {
   return playerStats ? playerStats["movement"]["percent_supersonic_speed"] : 0;
 };
 
+const getPercentBoostSpeed = (replayStats, playerName) => {
+  const playerStats = getPlayerStats(replayStats, playerName);
+  return playerStats ? playerStats["movement"]["percent_boost_speed"] : 0;
+};
+
+const getPercentSlowSpeed = (replayStats, playerName) => {
+  const playerStats = getPlayerStats(replayStats, playerName);
+  return playerStats ? playerStats["movement"]["percent_slow_speed"] : 0;
+};
+
 const getAvgSpeed = (replayStats, playerName) => {
   const playerStats = getPlayerStats(replayStats, playerName);
   return playerStats ? playerStats["movement"]["avg_speed"] : 0;
@@ -251,6 +261,8 @@ export const wrappedUtils = {
   getDemosTaken: withReplayStats(getDemosTaken),
   getTotalDistance: withReplayStats(getTotalDistance),
   getPercentSupersonicSpeed: withReplayStats(getPercentSupersonicSpeed),
+  getPercentBoostSpeed: withReplayStats(getPercentBoostSpeed),
+  getPercentSlowSpeed: withReplayStats(getPercentSlowSpeed),
   getMapName: withReplayStats(getMapName),
   getOvertimeSeconds: withReplayStats(getOvertimeSeconds),
   getGoalDifference: withReplayStats(getGoalDifference),

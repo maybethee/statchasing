@@ -1,5 +1,4 @@
 import { useReplays } from "./ReplaysContext";
-// import { getDemosInflicted, getDemosTaken } from "./utils";
 import { wrappedUtils } from "./utils";
 
 import { Pie } from "react-chartjs-2";
@@ -57,6 +56,8 @@ function DemoStats() {
 
   return (
     <div>
+      <br />
+      <br />
       <h2>Demolition Stats</h2>
       <br />
       <div style={{ position: "relative", width: "400px" }}>
@@ -76,8 +77,6 @@ function DemoStats() {
       </div>
       <br />
       <ul>
-        {/* <li>average demos inflicted: {avgDemosInflicted()}</li>
-        <li>average demos taken: {avgDemosTaken()}</li> */}
         <li>most demoes in a single game: {highestDemoCount()}</li>
       </ul>
     </div>

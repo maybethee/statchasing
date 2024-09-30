@@ -37,6 +37,29 @@ function MovementStats() {
     const avg = sum / filteredReplays.length;
     return avg.toFixed(2);
   }
+  function avgBoostSpeed() {
+    const filteredReplays = filterReplays();
+
+    const sum = filteredReplays.reduce(
+      (sum, replay) =>
+        sum + wrappedUtils.getPercentBoostSpeed(replay, playerName),
+      0
+    );
+    const avg = sum / filteredReplays.length;
+    return avg.toFixed(2);
+  }
+
+  function avgSlowSpeed() {
+    const filteredReplays = filterReplays();
+
+    const sum = filteredReplays.reduce(
+      (sum, replay) =>
+        sum + wrappedUtils.getPercentSlowSpeed(replay, playerName),
+      0
+    );
+    const avg = sum / filteredReplays.length;
+    return avg.toFixed(2);
+  }
 
   function avgBPM() {
     const filteredReplays = filterReplays();
@@ -92,8 +115,11 @@ function MovementStats() {
     return avg.toFixed(2);
   }
 
+  // figure out a better system for the buttons, maybe just set up an object with button names and their associated playlist names, and only display replays under played playlists, as i did with the car stats
   return (
     <div>
+      <br />
+      <br />
       <h2>Movement/Speed Stats</h2>
       <br />
       <button onClick={() => setPlaylist(null)}>All</button>
@@ -104,7 +130,9 @@ function MovementStats() {
       <br />
 
       <ul>
-        <li>average % supersonic: {avgSupersonic()}%</li>
+        <li>average % supersonic speed: {avgSupersonic()}%</li>
+        <li>average % boost speed: {avgBoostSpeed()}%</li>
+        <li>average % slow speed: {avgSlowSpeed()}%</li>
         <li>average overall speed: {formatAvgOfAvgSpeed()}</li>
         <br />
 

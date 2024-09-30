@@ -1,5 +1,4 @@
 import { useReplays } from "./ReplaysContext";
-// import { getDemosInflicted, getDemosTaken } from "./utils";
 import { wrappedUtils } from "./utils";
 
 function DateStats() {
@@ -50,7 +49,6 @@ function DateStats() {
     );
   }
 
-  // look over this function
   const dateWithMostReplays = (dateGroups) => {
     return Object.entries(dateGroups).reduce(
       (acc, [date, replays]) => {
@@ -69,30 +67,6 @@ function DateStats() {
       { maxVal: 0, maxKeys: [] }
     );
   };
-
-  // function formatDateWithMostWins() {
-  //   const dateGroups = groupReplaysByDate(replays);
-  //   const winsByDate = groupWinsByDate(dateGroups);
-  //   const { maxVal, maxKeys } = dateWithMostWins(winsByDate);
-
-  //   return (
-  //     "date(s) with most wins: " +
-  //     maxKeys
-  //       .map((key) => {
-  //         const keyDate = new Date(key + "T00:00:00").toLocaleDateString(
-  //           "en-US",
-  //           {
-  //             timeZone: "UTC",
-  //             year: "numeric",
-  //             month: "short",
-  //             day: "numeric",
-  //           }
-  //         );
-  //         return `${keyDate}, with ${maxVal} wins`;
-  //       })
-  //       .join(", ")
-  //   );
-  // }
 
   function formatDateWithMostWins() {
     const dateGroups = groupReplaysByDate(replays);
@@ -117,7 +91,7 @@ function DateStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `date(s) with most wins: ${formattedDates}, with ${maxVal} wins`;
+    return `date(s) with most wins: ${formattedDates}, with ${maxVal} win(s)`;
   }
 
   function getAllWinStreaks() {
@@ -214,7 +188,11 @@ function DateStats() {
       })
       .join(objectsWithMaxWinStreak.length > 2 ? ", " : " ");
 
-    return `largest win streak(s): ${maxWinStreak} wins ${formattedStreaks}.`;
+    if (maxWinStreak === -Infinity) {
+      return "Win more than one game in a row to see your largest win streak!";
+    }
+
+    return `largest win streak(s): ${maxWinStreak} win(s) ${formattedStreaks}.`;
   }
 
   function avgGamesPlayedPerSession() {
@@ -284,11 +262,13 @@ function DateStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `date(s) with most played games: ${formattedDates}, with ${maxVal} games`;
+    return `date(s) with most played games: ${formattedDates}, with ${maxVal} game(s)`;
   }
 
   return (
     <div>
+      <br />
+      <br />
       <h2>Date Stats</h2>
       <br />
       {formatHighestWinStreak()}

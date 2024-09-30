@@ -233,7 +233,6 @@ function App() {
         </div>
       )}
       <br />
-      <br />
       <form onSubmit={handleSubmit}>
         <label>
           copy and paste a player's ballchasing profile URL.

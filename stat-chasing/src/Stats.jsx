@@ -171,7 +171,7 @@ function Stats() {
   const mapWithMostReplays = (mapGroups) => {
     return Object.entries(mapGroups).reduce(
       (acc, [mapName, replays]) => {
-        const count = replays.length; // Get the number of replays for each date
+        const count = replays.length;
         if (count > acc.maxVal) {
           acc.maxVal = count;
           acc.maxKeys = [mapName];
@@ -199,7 +199,7 @@ function Stats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `map(s) with most wins: ${formattedDates}, with ${maxVal} wins`;
+    return `map(s) with most wins: ${formattedDates}, with ${maxVal} win(s)`;
   }
 
   function formatMapWithMostReplays() {
@@ -216,7 +216,7 @@ function Stats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `map(s) with most played games: ${formattedDates}, with ${maxVal} games`;
+    return `map(s) with most played games: ${formattedDates}, with ${maxVal} game(s)`;
   }
 
   const combinedGoalDiffs = gamesWonGoalDiffs()
@@ -281,6 +281,9 @@ function Stats() {
       <h1>{playerName}'s Stats:</h1>
       <br />
       <br />
+      <h2>(based on {replays.length} fetched replays)</h2>
+      <br />
+      <br />
       average MVPs out of all games: {avgMVPInAllGames()}
       <br />
       <br />
@@ -294,23 +297,11 @@ function Stats() {
       <div style={{ fontSize: "1.1rem" }}>
         <br />
         <CarStats />
-        <br />
-        <br />
         <WinLossStats />
-        <br />
-        <br />
         <DateStats />
-        <br />
-        <br />
         <OvertimeStats />
-        <br />
-        <br />
         <DemoStats />
-        <br />
-        <br />
         <MovementStats />
-        <br />
-        <br />
         <div style={{ position: "relative" }}>
           <Bar
             data={{

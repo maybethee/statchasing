@@ -1,29 +1,30 @@
 import { useReplays } from "./ReplaysContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { wrappedUtils } from "./utils";
 
 function CarStats() {
   const { replays, playerName } = useReplays();
   const [usedCar, setUsedCar] = useState(null);
-  const usedCarArr = getUsedCarsArr();
+  const [usedCarArr, setUsedCarArr] = useState([]);
 
-  function getUsedCarsArr() {
-    let usedCars = [];
+  useEffect(() => {
+    if (replays.length > 0) {
+      let usedCars = [];
 
-    replays.forEach((replay) => {
-      const carName = wrappedUtils.getUsedCar(replay, playerName);
+      replays.forEach((replay) => {
+        const carName = wrappedUtils.getUsedCar(replay, playerName);
 
-      if (carName) {
-        usedCars.push(carName);
-      }
-    });
+        if (carName) {
+          usedCars.push(carName);
+        }
+      });
+      let usedCarUniqueArr = usedCars.filter(function (value, id, self) {
+        return id == self.indexOf(value) && value != null;
+      });
 
-    let usedCarUniqueArr = usedCars.filter(function (value, id, self) {
-      return id == self.indexOf(value) && value != null;
-    });
-
-    return usedCarUniqueArr;
-  }
+      setUsedCarArr(usedCarUniqueArr);
+    }
+  }, [replays]);
 
   function filterReplaysByUsedCar() {
     let replaysWithUsedCar = replays;
@@ -75,11 +76,22 @@ function CarStats() {
 
   if (usedCarArr.length <= 1) {
     console.log("used carr arr:", usedCarArr);
-    return null;
+    return (
+      <div>
+        <br />
+        <br />
+        <h2>Car Stats</h2>
+        <br />
+        <p>Only one car used, nothing to compare against.</p>
+        <br />
+      </div>
+    );
   }
 
   return (
     <div>
+      <br />
+      <br />
       <h2>Car Stats</h2>
       <br />
       <button onClick={() => setUsedCar(null)}>All</button>

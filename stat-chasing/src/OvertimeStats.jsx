@@ -1,6 +1,6 @@
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
-
+import { useState, useEffect } from "react";
 import { Doughnut, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,6 +23,16 @@ ChartJS.register(
 
 function OvertimeStats() {
   const { replays, playerName } = useReplays();
+  const [replaysWithOvertimes, setReplaysWithOvertimes] = useState([]);
+
+  useEffect(() => {
+    if (replays.length > 0) {
+      const overtimes = replays.filter((replay) =>
+        wrappedUtils.getOvertimeSeconds(replay)
+      );
+      setReplaysWithOvertimes(overtimes);
+    }
+  }, [replays]);
 
   function formatOvertime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -110,8 +120,22 @@ function OvertimeStats() {
     return winsAndLosses;
   };
 
+  if (replaysWithOvertimes.length < 1) {
+    return (
+      <div>
+        <br />
+        <br />
+        <h2>Overtime Stats</h2>
+        <br />
+        <p>No overtimes found.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
+      <br />
+      <br />
       <h2>Overtime Stats</h2>
       <br />
 
@@ -132,6 +156,7 @@ function OvertimeStats() {
       </div>
 
       <ul>
+        <br />
         <li>% games go to overtime: {overtimeGamesPercent()}%</li>
         <li>longest overtime: {longestOvertime()}</li>
         <li>longest overtime win: {longestOvertimeWin()}</li>
