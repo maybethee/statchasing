@@ -53,7 +53,7 @@ const joinNamesWithLinks = (players) => {
     return `<a href="${players[0].profileLink}">${players[0].name}</a>`;
   if (players.length === 2)
     return players
-      .map((player) => `a href="${player.profileLink}">${player.name}</a>`)
+      .map((player) => `<a href="${player.profileLink}">${player.name}</a>`)
       .join(" and ");
 
   return (
@@ -91,7 +91,7 @@ const getOpposingPlayers = (opposingTeam) => {
   let players = [];
 
   for (let player = 0; player < opposingTeam.length; player++) {
-    console.log("curr player: ", opposingTeam[player]);
+    // console.log("curr player: ", opposingTeam[player]);
     players.push({
       id: player,
       name: opposingTeam[player]["name"],
@@ -99,7 +99,7 @@ const getOpposingPlayers = (opposingTeam) => {
     });
   }
 
-  console.log("array of player profile objs", players);
+  // console.log("array of player profile objs", players);
   return players;
 };
 

@@ -8,7 +8,8 @@ import AdminLoginBtn from "./AdminLoginBtn";
 function App() {
   const {
     replays,
-    setReplays,
+    setPrefilteredReplays,
+    setPlaylist,
     loading,
     setLoading,
     error,
@@ -96,7 +97,7 @@ function App() {
 
       // refactor this?
       if (uniqueReplays.length > 0) {
-        setReplays((prevReplays) => {
+        setPrefilteredReplays((prevReplays) => {
           matchGuids.clear();
 
           // console.log("match guids set:", matchGuids);
@@ -138,7 +139,7 @@ function App() {
         await setPlayerNameUsingReplay(uniqueReplays, playerId);
 
         if (playerId !== lastPlayerId) {
-          setReplays([...uniqueReplays]);
+          setPrefilteredReplays([...uniqueReplays]);
           setLastPlayerId(playerId);
         }
       } else {
@@ -155,9 +156,12 @@ function App() {
     }
   };
 
-  const setPlayerNameUsingReplay = async (replays, playerId) => {
+  const setPlayerNameUsingReplay = async (prefilteredReplays, playerId) => {
     const splitId = playerId.split(":")[1];
-    const newPlayerName = wrappedUtils.getPlayerNameById(replays[0], splitId);
+    const newPlayerName = wrappedUtils.getPlayerNameById(
+      prefilteredReplays[0],
+      splitId
+    );
     setPlayerName(newPlayerName);
   };
 
@@ -167,7 +171,7 @@ function App() {
     setInputError(null);
 
     if (playerId !== lastPlayerId) {
-      setReplays([]);
+      setPrefilteredReplays([]);
       setLastPlayerId(playerId);
     }
 
@@ -206,13 +210,6 @@ function App() {
         again.
       </p>
     );
-
-  // console.log("player name:", playerName);
-  // console.log(
-  //   replays.map((replay) => {
-  //     return replay["replay_stats"][0]["stats"];
-  //   })
-  // );
 
   return (
     <div>
@@ -255,6 +252,10 @@ function App() {
         <div style={{ margin: "2rem" }}>
           <div style={{ fontSize: "1.1rem" }}>
             <br />
+            <button onClick={() => setPlaylist(null)}>All</button>
+            <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
+            <button onClick={() => setPlaylist("ranked-doubles")}>2v2</button>
+            <button onClick={() => setPlaylist("ranked-standard")}>3v3</button>
             <Stats replays={replays} playerName={playerName} />
           </div>
           <br />

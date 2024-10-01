@@ -138,7 +138,6 @@ function OvertimeStats() {
       <br />
       <h2>Overtime Stats</h2>
       <br />
-
       <div style={{ position: "relative", width: "400px" }}>
         <Pie
           data={{

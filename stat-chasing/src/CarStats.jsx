@@ -75,7 +75,7 @@ function CarStats() {
   // don't display if only one car
 
   if (usedCarArr.length <= 1) {
-    console.log("used carr arr:", usedCarArr);
+    // console.log("used carr arr:", usedCarArr);
     return (
       <div>
         <br />

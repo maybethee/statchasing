@@ -102,7 +102,7 @@ function DateStats() {
     const sortedReplays = sortReplaysByDate(replays);
     sortedReplays.forEach((replay) => {
       const date = wrappedUtils.splitReplayDate(replay);
-      console.log(replay.data.date);
+      // console.log(replay.data.date);
       if (!wrappedUtils.isPlayerWinner(replay, playerName)) {
         // if loss
 

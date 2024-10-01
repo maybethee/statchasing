@@ -32,21 +32,25 @@ ChartJS.register(
 function Stats() {
   const { replays, playerName } = useReplays();
   const [biggestWin, setBiggestWin] = useState(null);
+  const [noReplays, setNoReplays] = useState(false);
 
   useEffect(() => {
     if (replays.length > 0) {
       setBiggestWin(highestGoalDifferenceGame());
+      setNoReplays(false);
+    } else {
+      setNoReplays(true);
     }
   }, [replays]);
 
   function highestGoalDifferenceGame() {
     const winningReplays = replays.filter((replay) => {
       const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
-      console.log("is winner?", isWinner);
+      // console.log("is winner?", isWinner);
       return isWinner;
     });
 
-    console.log("Winning Replays:", winningReplays);
+    // console.log("Winning Replays:", winningReplays);
 
     if (winningReplays.length > 0) {
       return winningReplays.reduce((maxReplay, replay) => {
@@ -275,6 +279,17 @@ function Stats() {
     "rgba(255, 99, 132, 1)",
     "rgba(255, 99, 132, 1)",
   ];
+
+  if (noReplays) {
+    return (
+      <div>
+        <h1>{playerName}'s Stats:</h1>
+        <br />
+        <br />
+        <h2>No replays found for the selected playlist</h2>
+      </div>
+    );
+  }
 
   return (
     <div>
