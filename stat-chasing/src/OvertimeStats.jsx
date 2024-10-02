@@ -1,28 +1,10 @@
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
 import { useState, useEffect } from "react";
-import { Doughnut, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import PieChart from "./PieChart";
 
 function OvertimeStats() {
-  const { replays, playerName } = useReplays();
+  const { replays, playerId } = useReplays();
   const [replaysWithOvertimes, setReplaysWithOvertimes] = useState([]);
 
   useEffect(() => {
@@ -49,15 +31,15 @@ function OvertimeStats() {
     return overtimePercent.toFixed(2);
   }
 
-  function overtimWinRate() {
-    const overtimeWins = replays.filter((replay) => {
-      const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
-      const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
-      return isWinner && overtimeSeconds > 0;
-    });
-    const winRate = overtimeWins.length / getOvertimes().length;
-    return winRate.toFixed(2);
-  }
+  // function overtimWinRate() {
+  //   const overtimeWins = replays.filter((replay) => {
+  //     const isWinner = wrappedUtils.isPlayerWinner(replay,)playerId);
+  //     const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
+  //     return isWinner && overtimeSeconds > 0;
+  //   });
+  //   const winRate = overtimeWins.length / getOvertimes().length;
+  //   return winRate.toFixed(2);
+  // }
 
   function longestOvertime() {
     const overtimes = getOvertimes().map((replay) =>
@@ -71,7 +53,7 @@ function OvertimeStats() {
   function longestOvertimeWin() {
     const overtimes = replays
       .filter((replay) => {
-        const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+        const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
         const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
         return isWinner && overtimeSeconds > 0;
       })
@@ -82,13 +64,15 @@ function OvertimeStats() {
 
     // console.log("Filtered Overtimes:", overtimes);
     const longestOvertimeSeconds = Math.max(...overtimes);
-    return formatOvertime(longestOvertimeSeconds);
+    return longestOvertimeSeconds === -Infinity
+      ? "No Overtimes Won :("
+      : formatOvertime(longestOvertimeSeconds);
   }
 
   function longestOvertimeLoss() {
     const overtimes = replays
       .filter((replay) => {
-        const isLoser = !wrappedUtils.isPlayerWinner(replay, playerName);
+        const isLoser = !wrappedUtils.isPlayerWinner(replay, playerId);
         const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
         return isLoser && overtimeSeconds > 0;
       })
@@ -99,7 +83,9 @@ function OvertimeStats() {
 
     // console.log("Filtered Overtimes:", overtimes);
     const longestOvertimeSeconds = Math.max(...overtimes);
-    return formatOvertime(longestOvertimeSeconds);
+    return longestOvertimeSeconds === -Infinity
+      ? "No Overtimes lost :)"
+      : formatOvertime(longestOvertimeSeconds);
   }
 
   const overtimeWinRatePieData = () => {
@@ -109,7 +95,7 @@ function OvertimeStats() {
       return overtimeSeconds > 0;
     });
     const overtimeWins = allOvertimes.filter((replay) => {
-      const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
       return isWinner;
     });
 
@@ -118,6 +104,60 @@ function OvertimeStats() {
     winsAndLosses.push(overtimeWins.length, totalLosses);
 
     return winsAndLosses;
+  };
+
+  const drawLabelsPlugin = {
+    afterDraw: function (chart) {
+      const ctx = chart.ctx;
+      const datasets = chart.data.datasets[0].data;
+      const total = datasets.reduce((acc, value) => acc + parseFloat(value), 0);
+
+      ctx.save();
+      datasets.forEach((value, index) => {
+        const meta = chart.getDatasetMeta(0);
+        const arc = meta.data[index];
+        const properties = arc.getProps(
+          ["x", "y", "startAngle", "endAngle", "outerRadius"],
+          true
+        );
+        const {
+          x: centerX,
+          y: centerY,
+          startAngle,
+          endAngle,
+          outerRadius,
+        } = properties;
+        const midAngle = (startAngle + endAngle) / 2;
+        const labelX = centerX + (outerRadius - 45) * Math.cos(midAngle); // Adjust the label position
+        const labelY = centerY + (outerRadius - 45) * Math.sin(midAngle); // Adjust the label position
+        const percentage = ((parseFloat(value) / total) * 100).toFixed(1);
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 14px sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(`${percentage}%`, labelX, labelY);
+      });
+      ctx.restore();
+    },
+  };
+
+  const data = {
+    labels: ["overtimes won", "overtimes lost"],
+    datasets: [
+      {
+        label: "overtimes",
+        data: overtimeWinRatePieData(),
+        backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)"],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      afterDatasetsDraw: drawLabelsPlugin.afterDatasetsDraw,
+    },
   };
 
   if (replaysWithOvertimes.length < 1) {
@@ -138,21 +178,8 @@ function OvertimeStats() {
       <br />
       <h2>Overtime Stats</h2>
       <br />
-      <div style={{ position: "relative", width: "400px" }}>
-        <Pie
-          data={{
-            labels: ["overtimes won", "overtimes lost"],
-            datasets: [
-              {
-                label: "overtimes",
-                data: overtimeWinRatePieData(),
-                backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)"],
-                hoverOffset: 4,
-              },
-            ],
-          }}
-        />
-      </div>
+
+      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
 
       <ul>
         <br />
@@ -160,7 +187,6 @@ function OvertimeStats() {
         <li>longest overtime: {longestOvertime()}</li>
         <li>longest overtime win: {longestOvertimeWin()}</li>
         <li>longest overtime loss: {longestOvertimeLoss()}</li>
-        <li>overtime win rate: {overtimWinRate()}</li>
       </ul>
     </div>
   );

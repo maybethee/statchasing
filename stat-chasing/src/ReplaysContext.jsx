@@ -12,6 +12,8 @@ const ReplaysProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [playerName, setPlayerName] = useState(null);
+  const [unprocessedPlayerId, setUnprocessedPlayerId] = useState("");
+  const [playerId, setPlayerId] = useState("");
 
   useEffect(() => {
     let replaysArr = prefilteredReplays;
@@ -32,7 +34,6 @@ const ReplaysProvider = ({ children }) => {
         prefilteredReplays,
         setPrefilteredReplays,
         replays,
-        // setReplays,
         playlist,
         setPlaylist,
         loading,
@@ -41,6 +42,10 @@ const ReplaysProvider = ({ children }) => {
         setError,
         playerName,
         setPlayerName,
+        playerId,
+        setPlayerId,
+        unprocessedPlayerId,
+        setUnprocessedPlayerId,
       }}
     >
       {children}

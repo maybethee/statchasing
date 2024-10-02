@@ -5,29 +5,31 @@ const withReplayStats =
     return fn(replayStats, ...args);
   };
 
-const findPlayer = (team, playerName) => {
-  return team ? team.find((player) => player["name"] === playerName) : null;
-};
+// const findPlayer = (team, playerName) => {
+//   return team ? team.find((player) => player["name"] === playerName) : null;
+// };
 
 const findPlayerById = (team, playerId) => {
-  return team ? team.find((player) => player["id"]["id"] === playerId) : null;
+  // split playerId
+  const splitId = playerId.split(":")[1];
+  return team ? team.find((player) => player["id"]["id"] === splitId) : null;
 };
 
 const inPlaylist = (replayStats, playlist) => {
   return replayStats["playlist_id"] === playlist ? true : false;
 };
 
-const withUsedCar = (replayStats, playerName, carName) => {
-  const usedCar = getUsedCar(replayStats, playerName);
+const withUsedCar = (replayStats, playerId, carName) => {
+  const usedCar = getUsedCar(replayStats, playerId);
   return usedCar === carName ? true : false;
 };
 
 // keep an eye on this, sometimes car_name is undefined unexpectedly? maybe similar to the map name returning undefined for the newest map, maybe was a newer car that wasn't updated in balllchasing
-const getUsedCar = (replayStats, playerName) => {
+const getUsedCar = (replayStats, playerId) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
   const player =
-    findPlayer(blueTeam, playerName) || findPlayer(orangeTeam, playerName);
+    findPlayerById(blueTeam, playerId) || findPlayerById(orangeTeam, playerId);
 
   // console.log("player", player);
 
@@ -68,19 +70,19 @@ const joinNamesWithLinks = (players) => {
   );
 };
 
-const getOpposingPlayerNamesWithLinks = (replayStats, playerName) => {
-  const opposingTeam = getOpposingTeam(replayStats, playerName);
+const getOpposingPlayerNamesWithLinks = (replayStats, playerId) => {
+  const opposingTeam = getOpposingTeam(replayStats, playerId);
   const opposingPlayers = getOpposingPlayers(opposingTeam);
 
   return joinNamesWithLinks(opposingPlayers);
 };
 
-const getOpposingTeam = (replayStats, playerName) => {
+const getOpposingTeam = (replayStats, playerId) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
   let opposingTeam;
 
-  findPlayer(blueTeam, playerName)
+  findPlayerById(blueTeam, playerId)
     ? (opposingTeam = orangeTeam)
     : (opposingTeam = blueTeam);
 
@@ -103,11 +105,11 @@ const getOpposingPlayers = (opposingTeam) => {
   return players;
 };
 
-const getPlayerStats = (replayStats, playerName) => {
+const getPlayerStats = (replayStats, playerId) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
   const player =
-    findPlayer(blueTeam, playerName) || findPlayer(orangeTeam, playerName);
+    findPlayerById(blueTeam, playerId) || findPlayerById(orangeTeam, playerId);
 
   return player ? player["stats"] : null;
 };
@@ -131,57 +133,63 @@ const getMapName = (replayStats) => {
     : replayStats["map_code"];
 };
 
-const isPlayerWinner = (replayStats, playerName) => {
+const isPlayerWinner = (replayStats, playerId) => {
   // console.log(replayStats);
+
+  const splitId = playerId.split(":")[1];
   const { blueTeam, orangeTeam } = getTeams(replayStats);
   const winningTeam = getWinningTeam(replayStats);
 
+  // console.log("split id:", splitId);
+  // console.log("blue team players:", blueTeam);
+  // console.log("orange team players:", orangeTeam);
+
   // true if player name is on winning team
   return (
-    (blueTeam.some((player) => player["name"] === playerName) &&
+    (blueTeam.some((player) => player["id"]["id"] === splitId) &&
       winningTeam === "blue") ||
-    (orangeTeam.some((player) => player["name"] === playerName) &&
+    (orangeTeam.some((player) => player["id"]["id"] === splitId) &&
       winningTeam === "orange")
   );
 };
 
-const getPercentSupersonicSpeed = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getPercentSupersonicSpeed = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["movement"]["percent_supersonic_speed"] : 0;
 };
 
-const getPercentBoostSpeed = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getPercentBoostSpeed = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["movement"]["percent_boost_speed"] : 0;
 };
 
-const getPercentSlowSpeed = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getPercentSlowSpeed = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["movement"]["percent_slow_speed"] : 0;
 };
 
-const getAvgSpeed = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getAvgSpeed = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["movement"]["avg_speed"] : 0;
 };
 
-const getBPM = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getBPM = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["boost"]["bpm"] : 0;
 };
 
-const getBCPM = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getBCPM = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["boost"]["bcpm"] : 0;
 };
 
-const getDemosInflicted = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getDemosInflicted = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["demo"]["inflicted"] : 0;
 };
 
-const getDemosTaken = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getDemosTaken = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["demo"]["taken"] : 0;
 };
 
@@ -212,8 +220,8 @@ const getGoalDifference = (replayStats) => {
   return Math.abs(blueGoals - orangeGoals);
 };
 
-const getTotalDistance = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getTotalDistance = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
   return playerStats ? playerStats["movement"]["total_distance"] : 0;
 };
 
@@ -221,8 +229,11 @@ const getOvertimeSeconds = (replayStats) => {
   return replayStats["overtime_seconds"];
 };
 
-const getMainCoreStats = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
+const getMainCoreStats = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
+  // console.log("replay stats:", replayStats);
+  // console.log("player id:", playerId);
+  // console.log("player:", playerStats);
   if (!playerStats || !playerStats["core"]) {
     console.error("Invalid player stats");
     return {};
@@ -248,9 +259,9 @@ const getMainCoreStats = (replayStats, playerName) => {
   return coreStats;
 };
 
-const isPlayerMVP = (replayStats, playerName) => {
-  const playerStats = getPlayerStats(replayStats, playerName);
-
+const isPlayerMVP = (replayStats, playerId) => {
+  const playerStats = getPlayerStats(replayStats, playerId);
+  console.log("player:", playerStats);
   return playerStats ? playerStats["core"]["mvp"] : null;
 };
 

@@ -16,9 +16,13 @@ function App() {
     setError,
     playerName,
     setPlayerName,
+    playerId,
+    setPlayerId,
+    unprocessedPlayerId,
+    setUnprocessedPlayerId,
   } = useReplays();
 
-  const [playerId, setPlayerId] = useState("");
+  // const [playerId, setPlayerId] = useState("");
   const [inputError, setInputError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [customDate, setCustomDate] = useState(new Date());
@@ -157,10 +161,10 @@ function App() {
   };
 
   const setPlayerNameUsingReplay = async (prefilteredReplays, playerId) => {
-    const splitId = playerId.split(":")[1];
+    // const splitId = playerId.split(":")[1];
     const newPlayerName = wrappedUtils.getPlayerNameById(
       prefilteredReplays[0],
-      splitId
+      playerId
     );
     setPlayerName(newPlayerName);
   };
@@ -170,14 +174,14 @@ function App() {
     setLoading(true);
     setInputError(null);
 
-    if (playerId !== lastPlayerId) {
+    if (unprocessedPlayerId !== lastPlayerId) {
       setPrefilteredReplays([]);
-      setLastPlayerId(playerId);
+      setLastPlayerId(unprocessedPlayerId);
     }
 
     const urlPattern =
       /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9]+)$/;
-    const match = playerId.match(urlPattern);
+    const match = unprocessedPlayerId.match(urlPattern);
 
     if (!match) {
       setInputError(
@@ -188,6 +192,7 @@ function App() {
     }
 
     const trimmedPlayerId = match[1].replace("/", ":");
+    setPlayerId(trimmedPlayerId);
 
     const afterDate = isAdmin
       ? customDate.toISOString().split(".")[0] + "Z"
@@ -230,6 +235,15 @@ function App() {
         </div>
       )}
       <br />
+      <button
+        onClick={() =>
+          navigator.clipboard.writeText(
+            "https://ballchasing.com/player/steam/76561198136291441"
+          )
+        }
+      >
+        copy
+      </button>
       <form onSubmit={handleSubmit}>
         <label>
           copy and paste a player's ballchasing profile URL.
@@ -238,8 +252,8 @@ function App() {
           <br />
           <input
             type="text"
-            value={playerId}
-            onChange={(e) => setPlayerId(e.target.value)}
+            value={unprocessedPlayerId}
+            onChange={(e) => setUnprocessedPlayerId(e.target.value)}
             placeholder="Enter ballchasing player URL"
           />
         </label>

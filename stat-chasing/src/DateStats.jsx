@@ -2,7 +2,7 @@ import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
 
 function DateStats() {
-  const { replays, playerName } = useReplays();
+  const { replays, playerId } = useReplays();
 
   function sortReplaysByDate(replays) {
     return replays.sort(
@@ -26,9 +26,7 @@ function DateStats() {
     const winsByDate = {};
     for (const date in dateGroups) {
       winsByDate[date] = dateGroups[date].reduce((count, replay) => {
-        return (
-          count + (wrappedUtils.isPlayerWinner(replay, playerName) ? 1 : 0)
-        );
+        return count + (wrappedUtils.isPlayerWinner(replay, playerId) ? 1 : 0);
       }, 0);
     }
     return winsByDate;
@@ -103,7 +101,7 @@ function DateStats() {
     sortedReplays.forEach((replay) => {
       const date = wrappedUtils.splitReplayDate(replay);
       // console.log(replay.data.date);
-      if (!wrappedUtils.isPlayerWinner(replay, playerName)) {
+      if (!wrappedUtils.isPlayerWinner(replay, playerId)) {
         // if loss
 
         // record streak before resetting

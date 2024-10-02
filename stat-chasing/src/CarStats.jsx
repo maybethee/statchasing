@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { wrappedUtils } from "./utils";
 
 function CarStats() {
-  const { replays, playerName } = useReplays();
+  const { replays, playerId } = useReplays();
   const [usedCar, setUsedCar] = useState(null);
   const [usedCarArr, setUsedCarArr] = useState([]);
 
@@ -12,7 +12,7 @@ function CarStats() {
       let usedCars = [];
 
       replays.forEach((replay) => {
-        const carName = wrappedUtils.getUsedCar(replay, playerName);
+        const carName = wrappedUtils.getUsedCar(replay, playerId);
 
         if (carName) {
           usedCars.push(carName);
@@ -31,11 +31,7 @@ function CarStats() {
 
     if (usedCar) {
       replaysWithUsedCar = replays.filter((replay) => {
-        const hasUsedCar = wrappedUtils.withUsedCar(
-          replay,
-          playerName,
-          usedCar
-        );
+        const hasUsedCar = wrappedUtils.withUsedCar(replay, playerId, usedCar);
         return hasUsedCar;
       });
     }
@@ -47,7 +43,7 @@ function CarStats() {
     const filteredReplays = filterReplaysByUsedCar();
 
     let statsArr = filteredReplays.map((replay) =>
-      wrappedUtils.getMainCoreStats(replay, playerName)
+      wrappedUtils.getMainCoreStats(replay, playerId)
     );
 
     const coreStatAvgs = {
@@ -73,7 +69,6 @@ function CarStats() {
   const coreStatAvgs = avgMainCoreStats();
 
   // don't display if only one car
-
   if (usedCarArr.length <= 1) {
     // console.log("used carr arr:", usedCarArr);
     return (

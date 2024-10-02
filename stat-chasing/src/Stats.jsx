@@ -30,7 +30,7 @@ ChartJS.register(
 );
 
 function Stats() {
-  const { replays, playerName } = useReplays();
+  const { replays, playerName, playerId } = useReplays();
   const [biggestWin, setBiggestWin] = useState(null);
   const [noReplays, setNoReplays] = useState(false);
 
@@ -45,7 +45,7 @@ function Stats() {
 
   function highestGoalDifferenceGame() {
     const winningReplays = replays.filter((replay) => {
-      const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
       // console.log("is winner?", isWinner);
       return isWinner;
     });
@@ -63,14 +63,14 @@ function Stats() {
     }
   }
 
-  // there may be a bug with biggestWin where it returns the playerName's team's players as opponents names (maybe only when there are very few replays? or maybe i mistook this when looking at some other player i'd played against and it showed my name as an opposing player?)
+  // there may be a bug with biggestWin where it returns the playerId's team's players as opponents names (maybe only when there are very few replays? or maybe i mistook this when looking at some other player i'd played against and it showed my name as an opposing player?)
   function formatBiggestWin() {
     // const biggestWin = highestGoalDifferenceGame();
 
     if (biggestWin) {
       const opponentsWithLinks = wrappedUtils.getOpposingPlayerNamesWithLinks(
         biggestWin,
-        playerName
+        playerId
       );
 
       // console.log(biggestWin["replay_stats"][0]["stats"]);
@@ -103,7 +103,7 @@ function Stats() {
     // 5 times, do:
     for (let n = 1; n <= 5; n++) {
       const gamesAtNDiff = replays.filter((replay) => {
-        const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+        const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
         const nGoals = wrappedUtils.isGoalDifference(replay, n);
         return isWinner && nGoals;
       });
@@ -121,7 +121,7 @@ function Stats() {
     // 5 times, do:
     for (let n = 1; n <= 5; n++) {
       const gamesAtNDiff = replays.filter((replay) => {
-        const isLoser = !wrappedUtils.isPlayerWinner(replay, playerName);
+        const isLoser = !wrappedUtils.isPlayerWinner(replay, playerId);
         const nGoals = wrappedUtils.isGoalDifference(replay, n);
         return isLoser && nGoals;
       });
@@ -149,9 +149,7 @@ function Stats() {
     const winsByMap = {};
     for (const mapName in mapGroups) {
       winsByMap[mapName] = mapGroups[mapName].reduce((count, replay) => {
-        return (
-          count + (wrappedUtils.isPlayerWinner(replay, playerName) ? 1 : 0)
-        );
+        return count + (wrappedUtils.isPlayerWinner(replay, playerId) ? 1 : 0);
       }, 0);
     }
     return winsByMap;
@@ -229,7 +227,7 @@ function Stats() {
 
   function avgMVPInAllGames() {
     const sum = replays.reduce((sum, replay) => {
-      if (wrappedUtils.isPlayerMVP(replay, playerName)) {
+      if (wrappedUtils.isPlayerMVP(replay, playerId)) {
         return sum + 1;
       }
       return sum;
@@ -241,11 +239,11 @@ function Stats() {
   function avgMVPInWins() {
     // note: this filter is necessary to differentiate from the above statistic
     const filteredReplays = replays.filter((replay) => {
-      const isWinner = wrappedUtils.isPlayerWinner(replay, playerName);
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
       return isWinner;
     });
     const sum = filteredReplays.reduce((sum, replay) => {
-      if (wrappedUtils.isPlayerMVP(replay, playerName)) {
+      if (wrappedUtils.isPlayerMVP(replay, playerId)) {
         return sum + 1;
       }
       return sum;
