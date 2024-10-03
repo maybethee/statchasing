@@ -2,7 +2,7 @@ class FetchReplaysService
   include HTTParty
   base_uri ENV['API_BASE_URL']
 
-  def initialize(player_id:, after_date: '2024-09-14T00:00:00Z')
+  def initialize(player_id:, after_date: '2024-09-24T00:00:00Z', sync_to_present: false)
     @player = Player.find_by(player_id:)
     @options = {
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },
@@ -47,8 +47,22 @@ class FetchReplaysService
     end
   end
 
-  def fetch_all_replays
-    @options[:query]['replay-date-before'] = @player.last_after_date.utc.iso8601 if @player.last_after_date
+  # replay-date-before should only get added when admin calls
+  def fetch_all_replays(sync_to_present = false)
+    Rails.logger.debug("Sync is?: #{sync_to_present}")
+    if sync_to_present
+      Rails.logger.debug('sync conditional triggered')
+      newest_replay = @player.replays.max_by { |replay| replay['date'] }['date']
+      Rails.logger.debug("newest replay: #{newest_replay}")
+      @options[:query]['replay-date-after'] = newest_replay.utc.iso8601 if newest_replay
+
+      Rails.logger.debug("today's date: #{Date.today.to_time.utc.iso8601}")
+      @options[:query]['replay-date-before'] = Date.today.to_time.utc.iso8601
+    elsif !sync_to_present && @player.last_after_date
+      @options[:query]['replay-date-before'] = @player.last_after_date.utc.iso8601
+    end
+
+    Rails.logger.debug("current query options: #{@options}")
     replays = []
     next_url = '/replays'
 
@@ -65,19 +79,17 @@ class FetchReplaysService
       break if next_url.nil?
     end
 
-    # update the player's last_after_date if new replays fetched
+    # update the player's last_after_date and last_before_date if new replays fetched
     if replays.any?
       # use oldest replay date as the new last_after_date
       oldest_replay_date = replays.min_by { |replay| replay['date'] }['date']
       Rails.logger.debug("Oldest replay date: #{oldest_replay_date}")
-
-      # Update the player's last_after_date and save it in the database
       @player.update(last_after_date: oldest_replay_date)
       Rails.logger.debug("Updated last_after_date to: #{oldest_replay_date}")
+      Rails.logger.debug("Now player's last after date is: #{@player.last_after_date.inspect}")
 
-      # # Reload the player object to reflect the updated value
-      # @player.reload
-      # Rails.logger.debug("Now player's last after date is: #{@player.last_after_date.inspect}")
+      newest_replay_date = replays.max_by { |replay| replay['date'] }['date']
+      @player.update(last_before_date: newest_replay_date)
     else
       Rails.logger.debug('No new replays were fetched.')
     end

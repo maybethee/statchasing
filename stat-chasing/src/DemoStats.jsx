@@ -87,17 +87,21 @@ function DemoStats() {
     },
   };
 
+  // if (avgDemosInflicted() < 1 && avgDemosTaken() < 1) {
+  //   return null;
+  // }
+
   return (
     <div>
       <br />
       <br />
       <h2>Demolition Stats</h2>
       <br />
-      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
+      {avgDemosInflicted() > 0 && avgDemosTaken() > 0 ? (
+        <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
+      ) : null}
       <br />
-      <ul>
-        <li>most demos in a single game: {highestDemoCount()}</li>
-      </ul>
+      <p>most demos in a single game: {highestDemoCount()}</p>
     </div>
   );
 }

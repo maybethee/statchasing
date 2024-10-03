@@ -261,7 +261,6 @@ const getMainCoreStats = (replayStats, playerId) => {
 
 const isPlayerMVP = (replayStats, playerId) => {
   const playerStats = getPlayerStats(replayStats, playerId);
-  console.log("player:", playerStats);
   return playerStats ? playerStats["core"]["mvp"] : null;
 };
 

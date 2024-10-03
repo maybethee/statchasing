@@ -131,9 +131,14 @@ function DateStats() {
 
           // will always need new obj created for id in this case
           streaks[`${id}`] = {};
+
           // record start date
-          // streaks[`${id}`].startDate = replay.data.date;
           streaks[`${id}`].startDate = date;
+
+          // prevents missing key for edge cases
+          if (!("winStreak" in streaks[`${id}`])) {
+            streaks[`${id}`].winStreak = 0;
+          }
         }
         // increase streak
         currentStreak++;
@@ -155,7 +160,7 @@ function DateStats() {
         objectsWithMaxWinStreak.push(winStreaks[id]);
       }
     }
-
+    // console.log(maxWinStreak);
     return { maxWinStreak, objectsWithMaxWinStreak };
   }
 
@@ -163,6 +168,10 @@ function DateStats() {
     const winStreaks = getAllWinStreaks();
     const { maxWinStreak, objectsWithMaxWinStreak } =
       getHighestWinStreak(winStreaks);
+
+    if (maxWinStreak < 1) {
+      return "Largest win streak(s): No win streak yet";
+    }
 
     const formattedStreaks = objectsWithMaxWinStreak
       .map((obj, index) => {
@@ -186,9 +195,9 @@ function DateStats() {
       })
       .join(objectsWithMaxWinStreak.length > 2 ? ", " : " ");
 
-    if (maxWinStreak === -Infinity) {
-      return "Win more than one game in a row to see your largest win streak!";
-    }
+    // if (maxWinStreak === -Infinity) {
+    //   return "Win more than one game in a row to see your largest win streak!";
+    // }
 
     return `largest win streak(s): ${maxWinStreak} win(s) ${formattedStreaks}.`;
   }

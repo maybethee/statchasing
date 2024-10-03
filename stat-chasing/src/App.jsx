@@ -56,7 +56,7 @@ function App() {
     checkAdminStatus();
   }, []);
 
-  const fetchReplays = async (playerId, afterDate = null) => {
+  const fetchReplays = async (playerId, afterDate = null, sync = false) => {
     try {
       const startTime = new Date().getTime();
 
@@ -64,10 +64,13 @@ function App() {
       if (afterDate) {
         requestBody.after_date = afterDate;
       }
+      if (sync) {
+        requestBody.sync = true;
+      }
 
       const response = await fetch(
         `http://localhost:3000/${
-          isAdmin ? "fetch_old_replays" : "fetch_replays"
+          isAdmin ? "fetch_replays_admin" : "fetch_replays"
         }`,
         {
           method: "POST",
@@ -78,6 +81,7 @@ function App() {
           body: JSON.stringify({
             player_id: playerId,
             after_date: afterDate,
+            sync: sync,
           }),
         }
       );
@@ -180,7 +184,7 @@ function App() {
     }
 
     const urlPattern =
-      /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9]+)$/;
+      /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9_]+)$/;
     const match = unprocessedPlayerId.match(urlPattern);
 
     if (!match) {
@@ -198,6 +202,14 @@ function App() {
       ? customDate.toISOString().split(".")[0] + "Z"
       : null;
     fetchReplays(trimmedPlayerId, afterDate);
+  };
+
+  const handleSync = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setInputError(null);
+
+    fetchReplays(playerId, null, true);
   };
 
   useEffect(() => {
@@ -232,6 +244,7 @@ function App() {
             value={customDate ? customDate.toISOString().split("T")[0] : ""}
             onChange={(e) => setCustomDate(new Date(e.target.value))}
           />
+          <button onClick={handleSync}>Sync Replays</button>
         </div>
       )}
       <br />
