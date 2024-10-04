@@ -173,7 +173,7 @@ function App() {
     setPlayerName(newPlayerName);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, sync = false) => {
     e.preventDefault();
     setLoading(true);
     setInputError(null);
@@ -201,16 +201,21 @@ function App() {
     const afterDate = isAdmin
       ? customDate.toISOString().split(".")[0] + "Z"
       : null;
-    fetchReplays(trimmedPlayerId, afterDate);
+
+    if (sync) {
+      fetchReplays(trimmedPlayerId, null, true);
+    } else {
+      fetchReplays(trimmedPlayerId, afterDate);
+    }
   };
 
-  const handleSync = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setInputError(null);
+  // const handleSync = (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setInputError(null);
 
-    fetchReplays(playerId, null, true);
-  };
+  //   fetchReplays(playerId, null, true);
+  // };
 
   useEffect(() => {
     if (initialFetch.current) {
@@ -244,7 +249,6 @@ function App() {
             value={customDate ? customDate.toISOString().split("T")[0] : ""}
             onChange={(e) => setCustomDate(new Date(e.target.value))}
           />
-          <button onClick={handleSync}>Sync Replays</button>
         </div>
       )}
       <br />
@@ -271,6 +275,9 @@ function App() {
           />
         </label>
         <button type="submit">Get Replays</button>
+        {isAdmin && (
+          <button onClick={(e) => handleSubmit(e, true)}>Sync Replays</button>
+        )}
       </form>
       {inputError && <p className="error">{inputError}</p>}
 

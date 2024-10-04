@@ -199,7 +199,7 @@ function DateStats() {
     //   return "Win more than one game in a row to see your largest win streak!";
     // }
 
-    return `largest win streak(s): ${maxWinStreak} win(s) ${formattedStreaks}.`;
+    return `largest win streak(s): ${maxWinStreak} wins ${formattedStreaks}.`;
   }
 
   function avgGamesPlayedPerSession() {

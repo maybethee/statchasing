@@ -3,8 +3,17 @@ class Api::V1::PlayersController < ApplicationController
 
   before_action :authenticate_user!, only: [:fetch_replays_admin]
 
+  # def delete_after_n_days(days)
+  #   @players = Player.all
+
+  #   @player = Player.find_or_create_by(player_id: params[:player_id])
+  #   replays = @player.replays.includes(:replay_stats)
+  #   Player.where()
+  # end
+
   def fetch_replays
     @player = Player.find_or_create_by(player_id: params[:player_id])
+
     replays = @player.replays.includes(:replay_stats)
 
     Rails.logger.debug("Player: #{@player.inspect}")
@@ -35,18 +44,18 @@ class Api::V1::PlayersController < ApplicationController
     if current_user.admin?
       @player = Player.find_or_create_by(player_id: params[:player_id])
 
+      Rails.logger.debug("replays that DONT include replay stats?: #{@player.replays.includes(!:replay_stats)}")
       after_date = params[:after_date]
       sync_to_present = params[:sync]
 
       if sync_to_present
         newest_replay = @player.replays.max_by { |replay| replay['data']['date'] }
-        after_date = newest_replay ? newest_replay['data']['date'] : nil
+        # ensure if called on nonexisting player, there is always an after date to prevent fetching every replay
+        after_date = newest_replay ? newest_replay['data']['date'] : Date.today.to_time.utc.iso8601
       elsif after_date.nil?
         render json: { error: 'after_date parameter is required for fetching old replays' }
         return
       end
-
-      #  after_date = Time.parse(after_date).utc.iso8601
 
       Rails.logger.debug("Fetching new replays for player: #{params[:player_id]} with after_date: #{params[:after_date]}")
 
