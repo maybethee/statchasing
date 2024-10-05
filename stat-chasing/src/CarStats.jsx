@@ -1,6 +1,7 @@
 import { useReplays } from "./ReplaysContext";
 import { useEffect, useState } from "react";
 import { wrappedUtils } from "./utils";
+import pluralize from "pluralize";
 
 function CarStats() {
   const { replays, playerId } = useReplays();
@@ -75,7 +76,7 @@ function CarStats() {
       <div>
         <br />
         <br />
-        <h2>Car Stats</h2>
+        <h3>Car Stats</h3>
         <br />
         <p>Only one car used, nothing to compare against.</p>
         <br />
@@ -87,7 +88,7 @@ function CarStats() {
     <div>
       <br />
       <br />
-      <h2>Car Stats</h2>
+      <h3>Car Stats</h3>
       <br />
       <button onClick={() => setUsedCar(null)}>All</button>
       {usedCarArr.map((car) => {
@@ -100,7 +101,10 @@ function CarStats() {
       <br />
       <br />
       <table>
-        <caption>Averages ({coreStatAvgs.numberOfGames} game(s)) </caption>
+        <caption>
+          Averages ({coreStatAvgs.numberOfGames}{" "}
+          {pluralize("game", coreStatAvgs.numberOfGames)})
+        </caption>
         <tbody>
           <tr>
             <th>Score</th>

@@ -24,36 +24,6 @@ ChartJS.register(
 
 function WinLossStats() {
   const { replays, playerId } = useReplays();
-  const [biggestWin, setBiggestWin] = useState(null);
-
-  useEffect(() => {
-    if (replays.length > 0) {
-      setBiggestWin(highestGoalDifferenceGame());
-      // setNoReplays(false);
-    } else {
-      // setNoReplays(true);
-    }
-  }, [replays]);
-
-  function highestGoalDifferenceGame() {
-    const winningReplays = replays.filter((replay) => {
-      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
-      // console.log("is winner?", isWinner);
-      return isWinner;
-    });
-
-    // console.log("Winning Replays:", winningReplays);
-
-    if (winningReplays.length > 0) {
-      return winningReplays.reduce((maxReplay, replay) => {
-        const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
-        const currentGoalDiff = wrappedUtils.getGoalDifference(replay);
-        return currentGoalDiff > maxGoalDiff ? replay : maxReplay;
-      }, winningReplays[0]);
-    } else {
-      return null;
-    }
-  }
 
   function gamesWonGoalDiffs() {
     const goalDiffsArr = [];
@@ -89,40 +59,6 @@ function WinLossStats() {
     }
     // console.log("games lost diff array: ", goalDiffsArr);
     return goalDiffsArr;
-  }
-
-  // there may be a bug with biggestWin where it returns the playerId's team's players as opponents names (maybe only when there are very few replays? or maybe i mistook this when looking at some other player i'd played against and it showed my name as an opposing player?)
-  function formatBiggestWin() {
-    // const biggestWin = highestGoalDifferenceGame();
-
-    if (biggestWin) {
-      const opponentsWithLinks = wrappedUtils.getOpposingPlayerNamesWithLinks(
-        biggestWin,
-        playerId
-      );
-
-      // console.log(biggestWin["replay_stats"][0]["stats"]);
-      return (
-        "biggest win: " +
-        wrappedUtils.getGoalDifference(biggestWin) +
-        " " +
-        "goal lead against " +
-        opponentsWithLinks +
-        " " +
-        "on " +
-        // eventually: link to replay on ballchasing?
-        new Date(
-          biggestWin["replay_stats"][0]["stats"]["date"]
-        ).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }) +
-        "."
-      );
-    } else {
-      return "Biggest win: No wins :( keep trying";
-    }
   }
 
   function avgMVPInAllGames() {
@@ -208,16 +144,16 @@ function WinLossStats() {
     .concat(gamesLostGoalDiffs());
 
   const backgroundColors = [
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(255, 99, 132, 0.6)",
+    "rgba(54, 162, 235, 0.8)",
+    "rgba(54, 162, 235, 0.8)",
+    "rgba(54, 162, 235, 0.8)",
+    "rgba(54, 162, 235, 0.8)",
+    "rgba(54, 162, 235, 0.8)",
+    "rgba(255, 99, 132, 0.8)",
+    "rgba(255, 99, 132, 0.8)",
+    "rgba(255, 99, 132, 0.8)",
+    "rgba(255, 99, 132, 0.8)",
+    "rgba(255, 99, 132, 0.8)",
   ];
 
   const borderColors = [
@@ -253,16 +189,18 @@ function WinLossStats() {
 
   return (
     <div>
-      <h2>Win/Loss Stats</h2>
+      <br />
+      <br />
+      <h3>Win/Loss Stats</h3>
       <br />
       <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
       <br />
+      <ul>
+        <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>
+        <li>Average MVPs out of only wins: {avgMVPInWins()}</li>
+      </ul>
       <br />
-      average MVPs out of all games: {avgMVPInAllGames()}
-      <br />
-      <br />
-      average MVPs out of only wins: {avgMVPInWins()}
-      <div style={{ position: "relative" }}>
+      <div className="chart-container bar-chart">
         <Bar
           data={{
             labels: [
@@ -295,6 +233,18 @@ function WinLossStats() {
               y: {
                 ticks: {
                   stepSize: 1,
+                  color: "rgba(230, 232, 239, 0.7)",
+                },
+                grid: {
+                  color: "rgba(230, 232, 239, 0.2)",
+                },
+              },
+              x: {
+                ticks: {
+                  color: "rgba(230, 232, 239, 0.7)",
+                },
+                grid: {
+                  color: "rgba(230, 232, 239, 0.2)",
                 },
               },
             },
@@ -315,8 +265,6 @@ function WinLossStats() {
           }}
         />
       </div>
-      <br />
-      <p dangerouslySetInnerHTML={{ __html: formatBiggestWin() }}></p>
     </div>
   );
 }

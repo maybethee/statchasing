@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import "./App.css";
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
 import Stats from "./Stats";
 import AdminLoginBtn from "./AdminLoginBtn";
+import styles from "./App.module.css";
 
 function App() {
   const {
@@ -22,7 +22,6 @@ function App() {
     setUnprocessedPlayerId,
   } = useReplays();
 
-  // const [playerId, setPlayerId] = useState("");
   const [inputError, setInputError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [customDate, setCustomDate] = useState(new Date());
@@ -209,14 +208,6 @@ function App() {
     }
   };
 
-  // const handleSync = (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setInputError(null);
-
-  //   fetchReplays(playerId, null, true);
-  // };
-
   useEffect(() => {
     if (initialFetch.current) {
       initialFetch.current = false;
@@ -235,56 +226,71 @@ function App() {
 
   return (
     <div>
-      <h1>Statchasing</h1>
-      <br />
-      <br />
-      <AdminLoginBtn />
-      <br />
-      <br />
-      {isAdmin && (
-        <div>
-          <label>Select date to fetch older replays (admins only): </label>
-          <input
-            type="date"
-            value={customDate ? customDate.toISOString().split("T")[0] : ""}
-            onChange={(e) => setCustomDate(new Date(e.target.value))}
-          />
-        </div>
-      )}
-      <br />
-      <button
-        onClick={() =>
-          navigator.clipboard.writeText(
-            "https://ballchasing.com/player/steam/76561198136291441"
-          )
-        }
-      >
-        copy
-      </button>
-      <form onSubmit={handleSubmit}>
-        <label>
-          copy and paste a player's ballchasing profile URL.
-          (https://ballchasing.com/player/steam/76561198136291441)
-          <br />
-          <br />
-          <input
-            type="text"
-            value={unprocessedPlayerId}
-            onChange={(e) => setUnprocessedPlayerId(e.target.value)}
-            placeholder="Enter ballchasing player URL"
-          />
-        </label>
-        <button type="submit">Get Replays</button>
-        {isAdmin && (
-          <button onClick={(e) => handleSubmit(e, true)}>Sync Replays</button>
-        )}
-      </form>
-      {inputError && <p className="error">{inputError}</p>}
+      <header>
+        <h1>Statchasing</h1>
+        <AdminLoginBtn />
+      </header>
+      <section>
+        <h2>Welcome</h2>
+        <p>
+          Find some interesting stats based on players' ballchasing.com
+          profiles. Currently, this only fetches replays from the last 30 days.
+        </p>
+        <p>
+          Note: due to the API rate limitations set by ballchasing, this process
+          can be *very* slow, especially if the searched for player has many
+          replays associated with them from the last 30 days.
+        </p>
+        <p>
+          Consider supporting ballchasing.com by becoming a{" "}
+          <a href="https://www.patreon.com/ballchasing">Patreon patron</a>.
+        </p>
+      </section>
 
-      {/* would like to display a message when a player wasn't found/when player has no replays available */}
-      {playerName && (
-        <div style={{ margin: "2rem" }}>
-          <div style={{ fontSize: "1.1rem" }}>
+      <section>
+        <button
+          onClick={() =>
+            navigator.clipboard.writeText(
+              "https://ballchasing.com/player/steam/76561198136291441"
+            )
+          }
+        >
+          Copy BijouBug's URL
+        </button>
+        <form className="playerSearchForm" onSubmit={handleSubmit}>
+          <label>
+            Start by copy and pasting a player's ballchasing profile URL.
+            (https://ballchasing.com/player/steam/76561198136291441)
+            <input
+              className={styles.playerProfileInput}
+              type="text"
+              value={unprocessedPlayerId}
+              onChange={(e) => setUnprocessedPlayerId(e.target.value)}
+              placeholder="Enter ballchasing player URL"
+            />
+          </label>
+          {isAdmin && (
+            <div>
+              <label>Select date to fetch older replays (admins only): </label>
+              <input
+                type="date"
+                value={customDate ? customDate.toISOString().split("T")[0] : ""}
+                onChange={(e) => setCustomDate(new Date(e.target.value))}
+              />
+            </div>
+          )}
+          <button type="submit">Get Replays</button>
+          {isAdmin && (
+            <button onClick={(e) => handleSubmit(e, true)}>Sync Replays</button>
+          )}
+        </form>
+        {inputError && <p className="error">{inputError}</p>}
+      </section>
+
+      <section>
+        {/* would like to display a message when a player wasn't found/when player has no replays available */}
+        {playerName && (
+          <div className={styles.playerStatsContainer}>
             <br />
             <button onClick={() => setPlaylist(null)}>All</button>
             <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
@@ -292,9 +298,15 @@ function App() {
             <button onClick={() => setPlaylist("ranked-standard")}>3v3</button>
             <Stats replays={replays} playerName={playerName} />
           </div>
-          <br />
-        </div>
-      )}
+        )}
+      </section>
+
+      <footer>
+        <p>
+          Source code available on{" "}
+          <a href="https://github.com/maybethee/stat-chasing-rails">Github</a>
+        </p>
+      </footer>
     </div>
   );
 }

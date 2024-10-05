@@ -19,7 +19,7 @@ ChartJS.register(
 );
 
 const DoughnutChart = ({ data, options, plugins }) => (
-  <div style={{ position: "relative", width: "400px" }}>
+  <div className="chart-container">
     <Doughnut data={data} options={options} plugins={plugins} />
   </div>
 );

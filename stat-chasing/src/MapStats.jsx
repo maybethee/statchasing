@@ -1,5 +1,6 @@
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "./utils";
+import pluralize from "pluralize";
 
 function MapStats() {
   const { replays, playerId } = useReplays();
@@ -72,7 +73,13 @@ function MapStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `map(s) with most wins: ${formattedDates}, with ${maxVal} win(s)`;
+    return `${pluralize(
+      "Map",
+      maxKeys.length
+    )} with most wins: ${formattedDates}, with ${maxVal} ${pluralize(
+      "win",
+      maxVal
+    )}`;
   }
 
   function formatMapWithMostReplays() {
@@ -89,20 +96,25 @@ function MapStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `map(s) with most played games: ${formattedDates}, with ${maxVal} game(s)`;
+    return `${pluralize(
+      "Map",
+      maxKeys.length
+    )} with most played games: ${formattedDates}, with ${maxVal} ${pluralize(
+      "game",
+      maxVal
+    )}`;
   }
 
   return (
     <div>
       <br />
       <br />
-      <h2>Map Stats</h2>
+      <h3>Map Stats</h3>
       <br />
-      <br />
-      {formatMapWithMostReplays()}
-      <br />
-      <br />
-      {formatMapWithMostWins()}
+      <ul>
+        <li>{formatMapWithMostReplays()}</li>
+        <li>{formatMapWithMostWins()}</li>
+      </ul>
       <br />
     </div>
   );

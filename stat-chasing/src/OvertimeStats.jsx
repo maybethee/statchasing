@@ -165,7 +165,7 @@ function OvertimeStats() {
       <div>
         <br />
         <br />
-        <h2>Overtime Stats</h2>
+        <h3>Overtime Stats</h3>
         <br />
         <p>No overtimes found.</p>
       </div>
@@ -176,7 +176,7 @@ function OvertimeStats() {
     <div>
       <br />
       <br />
-      <h2>Overtime Stats</h2>
+      <h3>Overtime Stats</h3>
       <br />
 
       <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
@@ -184,9 +184,9 @@ function OvertimeStats() {
       <ul>
         <br />
         <li>% games go to overtime: {overtimeGamesPercent()}%</li>
-        <li>longest overtime: {longestOvertime()}</li>
-        <li>longest overtime win: {longestOvertimeWin()}</li>
-        <li>longest overtime loss: {longestOvertimeLoss()}</li>
+        <li>Longest overtime: {longestOvertime()}</li>
+        <li>Longest overtime win: {longestOvertimeWin()}</li>
+        <li>Longest overtime loss: {longestOvertimeLoss()}</li>
       </ul>
     </div>
   );

@@ -1,8 +1,71 @@
 import { useReplays } from "./ReplaysContext";
+import { useState, useEffect } from "react";
 import { wrappedUtils } from "./utils";
+import pluralize from "pluralize";
 
 function DateStats() {
   const { replays, playerId } = useReplays();
+  const [biggestWin, setBiggestWin] = useState(null);
+
+  useEffect(() => {
+    if (replays.length > 0) {
+      setBiggestWin(highestGoalDifferenceGame());
+    }
+  }, [replays]);
+
+  function highestGoalDifferenceGame() {
+    const winningReplays = replays.filter((replay) => {
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
+      // console.log("is winner?", isWinner);
+      return isWinner;
+    });
+
+    // console.log("Winning Replays:", winningReplays);
+
+    if (winningReplays.length > 0) {
+      return winningReplays.reduce((maxReplay, replay) => {
+        const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
+        const currentGoalDiff = wrappedUtils.getGoalDifference(replay);
+        return currentGoalDiff > maxGoalDiff ? replay : maxReplay;
+      }, winningReplays[0]);
+    } else {
+      return null;
+    }
+  }
+
+  // there may be a bug with biggestWin where it returns the playerId's team's players as opponents names (maybe only when there are very few replays? or maybe i mistook this when looking at some other player i'd played against and it showed my name as an opposing player?)
+  function formatBiggestWin() {
+    // const biggestWin = highestGoalDifferenceGame();
+
+    if (biggestWin) {
+      const opponentsWithLinks = wrappedUtils.getOpposingPlayerNamesWithLinks(
+        biggestWin,
+        playerId
+      );
+
+      // console.log(biggestWin["replay_stats"][0]["stats"]);
+      return (
+        "Biggest win: " +
+        wrappedUtils.getGoalDifference(biggestWin) +
+        " " +
+        "goal lead against " +
+        opponentsWithLinks +
+        " " +
+        "on " +
+        // eventually: link to replay on ballchasing?
+        new Date(
+          biggestWin["replay_stats"][0]["stats"]["date"]
+        ).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }) +
+        "."
+      );
+    } else {
+      return "Biggest win: No wins :( keep trying";
+    }
+  }
 
   function sortReplaysByDate(replays) {
     return replays.sort(
@@ -89,7 +152,13 @@ function DateStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `date(s) with most wins: ${formattedDates}, with ${maxVal} win(s)`;
+    return `${pluralize(
+      "Date",
+      maxKeys.length
+    )} with most wins: ${formattedDates}, with ${maxVal} ${pluralize(
+      "win",
+      maxVal
+    )}`;
   }
 
   function getAllWinStreaks() {
@@ -170,7 +239,7 @@ function DateStats() {
       getHighestWinStreak(winStreaks);
 
     if (maxWinStreak < 1) {
-      return "Largest win streak(s): No win streak yet";
+      return "Largest win streak: No win streak yet";
     }
 
     const formattedStreaks = objectsWithMaxWinStreak
@@ -199,7 +268,10 @@ function DateStats() {
     //   return "Win more than one game in a row to see your largest win streak!";
     // }
 
-    return `largest win streak(s): ${maxWinStreak} wins ${formattedStreaks}.`;
+    return `Largest win ${pluralize(
+      "streak",
+      objectsWithMaxWinStreak.length
+    )}: ${maxWinStreak} ${pluralize("win", maxWinStreak)} ${formattedStreaks}.`;
   }
 
   function avgGamesPlayedPerSession() {
@@ -269,7 +341,13 @@ function DateStats() {
       })
       .join(maxKeys.length > 2 ? ", " : " ");
 
-    return `date(s) with most played games: ${formattedDates}, with ${maxVal} game(s)`;
+    return `${pluralize(
+      "Date",
+      maxKeys.length
+    )} with most played games: ${formattedDates}, with ${maxVal} ${pluralize(
+      "game",
+      maxVal
+    )}`;
   }
 
   return (
@@ -278,19 +356,16 @@ function DateStats() {
       <br />
       <h2>Date Stats</h2>
       <br />
-      {formatHighestWinStreak()}
-      <br />
-      <br />
-      average ranked games played per session: {avgGamesPlayedPerSession()}
-      <br />
-      <br />
-      average ranked games played per day: {avgGamesPlayedPerDay()}
-      <br />
-      <br />
-      {formatDateWithMostReplays()}
-      <br />
-      <br />
-      {formatDateWithMostWins()}
+      <ul>
+        <li dangerouslySetInnerHTML={{ __html: formatBiggestWin() }}></li>
+        <li>{formatHighestWinStreak()}</li>
+        <li>
+          Average ranked games played per session: {avgGamesPlayedPerSession()}
+        </li>
+        <li>Average ranked games played per day: {avgGamesPlayedPerDay()}</li>
+        <li>{formatDateWithMostReplays()}</li>
+        <li>{formatDateWithMostWins()}</li>
+      </ul>
     </div>
   );
 }

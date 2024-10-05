@@ -31,7 +31,40 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
-  line-height: 1;
+  margin: 0 1rem;
+  background-color: #17181c;
+  color: rgb(230, 232, 239);
+  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+button {
+  background-color: #2d9f88;
+}
+input {
+  background-color: #0a0a0a;
+  color: #e5e7ee;
+}
+canvas {
+  background-color: #333333;
+  padding: 1rem;
+}
+.chart-container:not(.bar-chart) {
+  position: relative;
+  width: 400px;
+}
+a {
+  color: #5ea3e4;
+}
+a:hover {
+  color: #e5e7ee;
+}
+
+input,
+button {
+  border-radius: 5px;
 }
 ol,
 ul {
@@ -53,12 +86,21 @@ table {
   border-spacing: 0;
 }
 
+section {
+  margin: 1.5rem 0;
+}
+
 h1 {
-  font-size: 4rem;
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 2.1rem;
+}
+
+h3 {
+  font-size: 1.7rem;
 }
 
 table,

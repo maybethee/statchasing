@@ -137,6 +137,7 @@ function MovementStats() {
       const textY = height / 2;
       ctx.fillText(text1, textX1, textY + 15); // Adjust the Y position for the first line
       ctx.fillText(text2, textX2, textY + 38); // Adjust the Y position for the second line
+      ctx.color = "white";
       ctx.save();
     },
   };
@@ -169,7 +170,7 @@ function MovementStats() {
     <div>
       <br />
       <br />
-      <h2>Movement/Speed Stats</h2>
+      <h3>Movement/Speed Stats</h3>
       <br />
       <DoughnutChart
         data={data}
@@ -178,12 +179,10 @@ function MovementStats() {
       />
       <ul>
         <br />
-        <li>average boost used per minute: {avgBPM()}</li>
-        <li>average boost collected per minute: {avgBCPM()}</li>
-        <br />
-        <li>average distance driven per game: {avgDistance()}</li>
-        <br />
-        <li> total distance driven across all games: {sumTotalDistance()}</li>
+        <li>Average boost used per minute: {avgBPM()}</li>
+        <li>Average boost collected per minute: {avgBCPM()}</li>
+        <li>Average distance driven per game: {avgDistance()}</li>
+        <li> Total distance driven across all games: {sumTotalDistance()}</li>
       </ul>
     </div>
   );
