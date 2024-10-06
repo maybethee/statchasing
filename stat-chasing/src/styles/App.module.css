@@ -1,0 +1,53 @@
+.pageContent {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  row-gap: 1.5rem;
+}
+
+.mainHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1rem 1rem 0 0;
+}
+
+.welcomeSection p {
+  margin: 1rem 0;
+}
+
+.playerSearchForm {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.playerSearchForm button {
+  padding: 0.6rem;
+}
+
+.playerProfileInput {
+  width: 460px;
+}
+
+.formBtnsContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  column-gap: 1rem;
+  /* align-items: ; */
+}
+
+.playlistBtnsContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.playlistBtnsContainer button {
+  padding: 0.5rem 1.2rem;
+}

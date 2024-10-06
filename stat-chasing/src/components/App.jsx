@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import Stats from "./Stats";
 import AdminLoginBtn from "./AdminLoginBtn";
-import styles from "./App.module.css";
+import styles from "../styles/App.module.css";
 
 function App() {
   const {
@@ -225,12 +225,12 @@ function App() {
     );
 
   return (
-    <div>
-      <header>
+    <div className={styles.pageContent}>
+      <header className={styles.mainHeader}>
         <h1>Statchasing</h1>
         <AdminLoginBtn />
       </header>
-      <section>
+      <section className={styles.welcomeSection}>
         <h2>Welcome</h2>
         <p>
           Find some interesting stats based on players' ballchasing.com
@@ -245,9 +245,9 @@ function App() {
           Consider supporting ballchasing.com by becoming a{" "}
           <a href="https://www.patreon.com/ballchasing">Patreon patron</a>.
         </p>
+        <hr />
       </section>
-
-      <section>
+      <section className={styles.playerSearchSection}>
         <button
           onClick={() =>
             navigator.clipboard.writeText(
@@ -257,7 +257,7 @@ function App() {
         >
           Copy BijouBug's URL
         </button>
-        <form className="playerSearchForm" onSubmit={handleSubmit}>
+        <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
           <label>
             Start by copy and pasting a player's ballchasing profile URL.
             (https://ballchasing.com/player/steam/76561198136291441)
@@ -279,10 +279,14 @@ function App() {
               />
             </div>
           )}
-          <button type="submit">Get Replays</button>
-          {isAdmin && (
-            <button onClick={(e) => handleSubmit(e, true)}>Sync Replays</button>
-          )}
+          <div className={styles.formBtnsContainer}>
+            <button type="submit">Get Replays</button>
+            {isAdmin && (
+              <button onClick={(e) => handleSubmit(e, true)}>
+                Sync Replays
+              </button>
+            )}
+          </div>
         </form>
         {inputError && <p className="error">{inputError}</p>}
       </section>
@@ -291,12 +295,15 @@ function App() {
         {/* would like to display a message when a player wasn't found/when player has no replays available */}
         {playerName && (
           <div className={styles.playerStatsContainer}>
-            <br />
-            <button onClick={() => setPlaylist(null)}>All</button>
-            <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
-            <button onClick={() => setPlaylist("ranked-doubles")}>2v2</button>
-            <button onClick={() => setPlaylist("ranked-standard")}>3v3</button>
-            <Stats replays={replays} playerName={playerName} />
+            <div className={styles.playlistBtnsContainer}>
+              <button onClick={() => setPlaylist(null)}>All</button>
+              <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
+              <button onClick={() => setPlaylist("ranked-doubles")}>2v2</button>
+              <button onClick={() => setPlaylist("ranked-standard")}>
+                3v3
+              </button>
+            </div>
+            <Stats />
           </div>
         )}
       </section>

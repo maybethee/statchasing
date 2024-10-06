@@ -1,9 +1,9 @@
 import { useReplays } from "./ReplaysContext";
 import { useState, useEffect } from "react";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import pluralize from "pluralize";
 
-function DateStats() {
+function DateStats({ className }) {
   const { replays, playerId } = useReplays();
   const [biggestWin, setBiggestWin] = useState(null);
 
@@ -351,11 +351,8 @@ function DateStats() {
   }
 
   return (
-    <div>
-      <br />
-      <br />
-      <h2>Date Stats</h2>
-      <br />
+    <div className={className}>
+      <h3>Date Stats</h3>
       <ul>
         <li dangerouslySetInnerHTML={{ __html: formatBiggestWin() }}></li>
         <li>{formatHighestWinStreak()}</li>

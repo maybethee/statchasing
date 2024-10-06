@@ -1,9 +1,10 @@
 import { useReplays } from "./ReplaysContext";
 import { useEffect, useState } from "react";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import pluralize from "pluralize";
+import styles from "../styles/CarStats.module.css";
 
-function CarStats() {
+function CarStats({ className }) {
   const { replays, playerId } = useReplays();
   const [usedCar, setUsedCar] = useState(null);
   const [usedCarArr, setUsedCarArr] = useState([]);
@@ -73,7 +74,7 @@ function CarStats() {
   if (usedCarArr.length <= 1) {
     // console.log("used carr arr:", usedCarArr);
     return (
-      <div>
+      <div className={className}>
         <br />
         <br />
         <h3>Car Stats</h3>
@@ -85,21 +86,18 @@ function CarStats() {
   }
 
   return (
-    <div>
-      <br />
-      <br />
+    <div className={className}>
       <h3>Car Stats</h3>
-      <br />
-      <button onClick={() => setUsedCar(null)}>All</button>
-      {usedCarArr.map((car) => {
-        return (
-          <button onClick={() => setUsedCar(car)} key={car}>
-            {car}
-          </button>
-        );
-      })}
-      <br />
-      <br />
+      <div className={styles.carBtnsContainer}>
+        <button onClick={() => setUsedCar(null)}>All</button>
+        {usedCarArr.map((car) => {
+          return (
+            <button onClick={() => setUsedCar(car)} key={car}>
+              {car}
+            </button>
+          );
+        })}
+      </div>
       <table>
         <caption>
           Averages ({coreStatAvgs.numberOfGames}{" "}
@@ -108,18 +106,26 @@ function CarStats() {
         <tbody>
           <tr>
             <th>Score</th>
-            <th>Goals</th>
-            <th>Assists</th>
-            <th>Shots</th>
-            <th>Saves</th>
-            <th>Shooting Percentage</th>
+            <td>{coreStatAvgs.score}</td>
           </tr>
           <tr>
-            <td>{coreStatAvgs.score}</td>
+            <th>Goals</th>
             <td>{coreStatAvgs.goals}</td>
+          </tr>
+          <tr>
+            <th>Assists</th>
             <td>{coreStatAvgs.assists}</td>
+          </tr>
+          <tr>
+            <th>Shots</th>
             <td>{coreStatAvgs.shots}</td>
+          </tr>
+          <tr>
+            <th>Saves</th>
             <td>{coreStatAvgs.saves}</td>
+          </tr>
+          <tr>
+            <th>Shooting Percentage</th>
             <td>{coreStatAvgs.shooting_percentage}</td>
           </tr>
         </tbody>

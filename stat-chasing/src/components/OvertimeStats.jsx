@@ -1,9 +1,9 @@
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import { useState, useEffect } from "react";
 import PieChart from "./PieChart";
 
-function OvertimeStats() {
+function OvertimeStats({ className }) {
   const { replays, playerId } = useReplays();
   const [replaysWithOvertimes, setReplaysWithOvertimes] = useState([]);
 
@@ -30,16 +30,6 @@ function OvertimeStats() {
     const overtimePercent = (getOvertimes().length / replays.length) * 100;
     return overtimePercent.toFixed(2);
   }
-
-  // function overtimWinRate() {
-  //   const overtimeWins = replays.filter((replay) => {
-  //     const isWinner = wrappedUtils.isPlayerWinner(replay,)playerId);
-  //     const overtimeSeconds = wrappedUtils.getOvertimeSeconds(replay);
-  //     return isWinner && overtimeSeconds > 0;
-  //   });
-  //   const winRate = overtimeWins.length / getOvertimes().length;
-  //   return winRate.toFixed(2);
-  // }
 
   function longestOvertime() {
     const overtimes = getOvertimes().map((replay) =>
@@ -163,26 +153,17 @@ function OvertimeStats() {
   if (replaysWithOvertimes.length < 1) {
     return (
       <div>
-        <br />
-        <br />
         <h3>Overtime Stats</h3>
-        <br />
         <p>No overtimes found.</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <br />
-      <br />
+    <div className={className}>
       <h3>Overtime Stats</h3>
-      <br />
-
       <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
-
       <ul>
-        <br />
         <li>% games go to overtime: {overtimeGamesPercent()}%</li>
         <li>Longest overtime: {longestOvertime()}</li>
         <li>Longest overtime win: {longestOvertimeWin()}</li>

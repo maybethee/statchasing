@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 
 const ReplaysContext = createContext();
 

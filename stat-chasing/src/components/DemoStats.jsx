@@ -1,8 +1,8 @@
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import PieChart from "./PieChart";
 
-function DemoStats() {
+function DemoStats({ className }) {
   const { replays, playerId } = useReplays();
 
   function avgDemosInflicted() {
@@ -88,15 +88,11 @@ function DemoStats() {
   };
 
   return (
-    <div>
-      <br />
-      <br />
+    <div className={className}>
       <h3>Demolition Stats</h3>
-      <br />
       {avgDemosInflicted() > 0 && avgDemosTaken() > 0 ? (
         <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
       ) : null}
-      <br />
       <p>Most demos in a single game: {highestDemoCount()}</p>
     </div>
   );

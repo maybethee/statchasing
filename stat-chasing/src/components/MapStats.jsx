@@ -1,8 +1,8 @@
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "./utils";
+import { wrappedUtils } from "../utils";
 import pluralize from "pluralize";
 
-function MapStats() {
+function MapStats({ className }) {
   const { replays, playerId } = useReplays();
 
   function groupReplaysByMap() {
@@ -106,11 +106,8 @@ function MapStats() {
   }
 
   return (
-    <div>
-      <br />
-      <br />
+    <div className={className}>
       <h3>Map Stats</h3>
-      <br />
       <ul>
         <li>{formatMapWithMostReplays()}</li>
         <li>{formatMapWithMostWins()}</li>

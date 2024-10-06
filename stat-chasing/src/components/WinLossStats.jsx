@@ -1,6 +1,6 @@
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "./utils";
-import { useState, useEffect } from "react";
+import { wrappedUtils } from "../utils";
+// import { useState, useEffect } from "react";
 import PieChart from "./PieChart";
 import { Bar } from "react-chartjs-2";
 import {
@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-function WinLossStats() {
+function WinLossStats({ className }) {
   const { replays, playerId } = useReplays();
 
   function gamesWonGoalDiffs() {
@@ -188,18 +188,15 @@ function WinLossStats() {
   };
 
   return (
-    <div>
-      <br />
-      <br />
+    <div className={className}>
       <h3>Win/Loss Stats</h3>
-      <br />
       <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
-      <br />
-      <ul>
-        <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>
-        <li>Average MVPs out of only wins: {avgMVPInWins()}</li>
-      </ul>
-      <br />
+      <div className="statText">
+        <ul>
+          <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>
+          <li>Average MVPs out of only wins: {avgMVPInWins()}</li>
+        </ul>
+      </div>
       <div className="chart-container bar-chart">
         <Bar
           data={{

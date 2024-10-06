@@ -1,0 +1,11 @@
+.carBtnsContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.carBtnsContainer button {
+  padding: 0.3rem 0.6rem;
+}

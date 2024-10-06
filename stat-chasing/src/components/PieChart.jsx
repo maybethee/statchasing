@@ -19,7 +19,7 @@ ChartJS.register(
 );
 
 const PieChart = ({ data, options, plugins }) => (
-  <div style={{ position: "relative", width: "400px" }}>
+  <div className="chart-container">
     <Pie data={data} options={options} plugins={plugins} />
   </div>
 );
