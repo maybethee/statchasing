@@ -34,13 +34,13 @@ function Stats() {
         </h3>
       </div>
       <div>
-        <MapStats className={styles.component} />
         <CarStats className={styles.component} />
         <WinLossStats className={styles.component} />
-        <DateStats className={styles.component} />
+        <MovementStats className={styles.component} />
         <OvertimeStats className={styles.component} />
         <DemoStats className={styles.component} />
-        <MovementStats className={styles.component} />
+        <MapStats className={styles.component} />
+        <DateStats className={styles.component} />
       </div>
     </div>
   );

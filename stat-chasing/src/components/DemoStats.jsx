@@ -90,10 +90,12 @@ function DemoStats({ className }) {
   return (
     <div className={className}>
       <h3>Demolition Stats</h3>
+      <ul>
+        <li>Most demos in a single game: {highestDemoCount()}</li>
+      </ul>
       {avgDemosInflicted() > 0 && avgDemosTaken() > 0 ? (
         <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
       ) : null}
-      <p>Most demos in a single game: {highestDemoCount()}</p>
     </div>
   );
 }

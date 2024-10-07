@@ -50,11 +50,12 @@ class FetchReplaysService
   # replay-date-before should only get added when admin calls
   def fetch_all_replays(sync_to_present = false)
     Rails.logger.debug("Sync is?: #{sync_to_present}")
-    if sync_to_present
-      Rails.logger.debug('sync conditional triggered')
-      newest_replay = @player.replays.max_by { |replay| replay['date'] }['date'] if @player.replays.length > 0
-      Rails.logger.debug("newest replay: #{newest_replay}")
-      @options[:query]['replay-date-after'] = newest_replay.utc.iso8601 if newest_replay
+    if sync_to_present &&
+       Rails.logger.debug('sync conditional triggered')
+      newest_replay = @player.replays.max_by { |replay| replay['date'] }['date'] if @player.replays.empty?
+      Rails.logger.debug("newest replay: #{newest_replay.inspect}")
+      # investigate newest_replay, it was coming up nil before but i'm not sure why, and syncing player would skip some days, not sure if it was because replays were from the same day that replay-date-after was changed to?
+      @options[:query]['replay-date-after'] = newest_replay if newest_replay
 
       # Rails.logger.debug("today's date: #{Date.today.to_time.utc.iso8601}")
       # @options[:query]['replay-date-before'] = Date.today.to_time.utc.iso8601

@@ -162,13 +162,13 @@ function OvertimeStats({ className }) {
   return (
     <div className={className}>
       <h3>Overtime Stats</h3>
-      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
       <ul>
         <li>% games go to overtime: {overtimeGamesPercent()}%</li>
         <li>Longest overtime: {longestOvertime()}</li>
         <li>Longest overtime win: {longestOvertimeWin()}</li>
         <li>Longest overtime loss: {longestOvertimeLoss()}</li>
       </ul>
+      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
     </div>
   );
 }

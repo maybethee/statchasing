@@ -228,6 +228,7 @@ function App() {
     <div className={styles.pageContent}>
       <header className={styles.mainHeader}>
         <h1>Statchasing</h1>
+        {/* remove admin login button for production */}
         <AdminLoginBtn />
       </header>
       <section className={styles.welcomeSection}>
@@ -248,7 +249,8 @@ function App() {
         <hr />
       </section>
       <section className={styles.playerSearchSection}>
-        <button
+        {/* remove copy URL button for production */}
+        {/* <button
           onClick={() =>
             navigator.clipboard.writeText(
               "https://ballchasing.com/player/steam/76561198136291441"
@@ -256,19 +258,26 @@ function App() {
           }
         >
           Copy BijouBug's URL
-        </button>
+        </button> */}
         <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
-          <label>
-            Start by copy and pasting a player's ballchasing profile URL.
-            (https://ballchasing.com/player/steam/76561198136291441)
-            <input
-              className={styles.playerProfileInput}
-              type="text"
-              value={unprocessedPlayerId}
-              onChange={(e) => setUnprocessedPlayerId(e.target.value)}
-              placeholder="Enter ballchasing player URL"
-            />
+          <label htmlFor="playerURL">
+            Start by pasting a player's entire ballchasing profile URL, the one
+            shown in the image below:
+            {/* replace link with example image */}
+            {/* (https://ballchasing.com/player/steam/76561198136291441) */}
           </label>
+          <img
+            src="../../assets/player-profile-url.png"
+            alt="Paste the URL copied from the address bar on a player's profile on ballchasing.com. The URL should follow this pattern: https://ballchasing.com/player/platform/id, where 'platform' can be 'steam', 'epic', 'psn', 'xbox', or 'switch', and 'id' will be a numeric or alphanumeric string, or otherwise may be the player's in-game name, depending on the platform."
+          />
+          <input
+            className={styles.playerProfileInput}
+            type="text"
+            id="playerURL"
+            value={unprocessedPlayerId}
+            onChange={(e) => setUnprocessedPlayerId(e.target.value)}
+            placeholder="Enter player's ballchasing URL"
+          />
           {isAdmin && (
             <div>
               <label>Select date to fetch older replays (admins only): </label>
@@ -292,16 +301,21 @@ function App() {
       </section>
 
       <section>
-        {/* would like to display a message when a player wasn't found/when player has no replays available */}
+        {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
         {playerName && (
           <div className={styles.playerStatsContainer}>
-            <div className={styles.playlistBtnsContainer}>
-              <button onClick={() => setPlaylist(null)}>All</button>
-              <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
-              <button onClick={() => setPlaylist("ranked-doubles")}>2v2</button>
-              <button onClick={() => setPlaylist("ranked-standard")}>
-                3v3
-              </button>
+            <div className={styles.playlistFilterSection}>
+              <h4>Filter by playlist:</h4>
+              <div className={styles.playlistBtnsContainer}>
+                <button onClick={() => setPlaylist(null)}>All</button>
+                <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
+                <button onClick={() => setPlaylist("ranked-doubles")}>
+                  2v2
+                </button>
+                <button onClick={() => setPlaylist("ranked-standard")}>
+                  3v3
+                </button>
+              </div>
             </div>
             <Stats />
           </div>

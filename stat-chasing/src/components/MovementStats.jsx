@@ -170,17 +170,17 @@ function MovementStats({ className }) {
   return (
     <div className={className}>
       <h3>Movement/Speed Stats</h3>
-      <DoughnutChart
-        data={data}
-        options={options}
-        plugins={[centerTextPlugin, drawLabelsPlugin]}
-      />
       <ul>
         <li>Average boost used per minute: {avgBPM()}</li>
         <li>Average boost collected per minute: {avgBCPM()}</li>
         <li>Average distance driven per game: {avgDistance()}</li>
         <li> Total distance driven across all games: {sumTotalDistance()}</li>
       </ul>
+      <DoughnutChart
+        data={data}
+        options={options}
+        plugins={[centerTextPlugin, drawLabelsPlugin]}
+      />
     </div>
   );
 }

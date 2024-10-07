@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, path: '', path_names: { sign_in: 'chip_time' }
+
   namespace :api do
     namespace :v1 do
       get 'check_admin', to: 'users#check_admin'

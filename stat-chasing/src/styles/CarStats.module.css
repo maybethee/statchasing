@@ -6,6 +6,16 @@
   margin-bottom: 0.7rem;
 }
 
+.carsFilterSection {
+  display: flex;
+  flex-flow: column;
+  row-gap: 0.6rem;
+}
+
+.carsFilterSection h4 {
+  font-style: italic;
+}
+
 .carBtnsContainer button {
   padding: 0.3rem 0.6rem;
 }
