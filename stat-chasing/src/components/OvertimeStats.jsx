@@ -133,7 +133,7 @@ function OvertimeStats({ className }) {
   };
 
   const data = {
-    labels: ["overtimes won", "overtimes lost"],
+    labels: ["Overtimes Won", "Overtimes Lost"],
     datasets: [
       {
         label: "overtimes",
@@ -146,6 +146,11 @@ function OvertimeStats({ className }) {
 
   const options = {
     plugins: {
+      legend: {
+        labels: {
+          color: "white",
+        },
+      },
       afterDatasetsDraw: drawLabelsPlugin.afterDatasetsDraw,
     },
   };

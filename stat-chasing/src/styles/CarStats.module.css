@@ -10,10 +10,12 @@
   display: flex;
   flex-flow: column;
   row-gap: 0.6rem;
+  align-items: center;
 }
 
 .carsFilterSection h4 {
   font-style: italic;
+  /* text-align: center; */
 }
 
 .carBtnsContainer button {

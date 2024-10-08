@@ -162,6 +162,11 @@ function MovementStats({ className }) {
   const options = {
     cutoutPercentage: 70,
     plugins: {
+      legend: {
+        labels: {
+          color: "white",
+        },
+      },
       beforeDraw: centerTextPlugin.beforeDraw,
       afterDatasetsDraw: drawLabelsPlugin.afterDatasetsDraw,
     },

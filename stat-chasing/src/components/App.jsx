@@ -250,7 +250,7 @@ function App() {
       </section>
       <section className={styles.playerSearchSection}>
         {/* remove copy URL button for production */}
-        {/* <button
+        <button
           onClick={() =>
             navigator.clipboard.writeText(
               "https://ballchasing.com/player/steam/76561198136291441"
@@ -258,7 +258,7 @@ function App() {
           }
         >
           Copy BijouBug's URL
-        </button> */}
+        </button>
         <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
           <label htmlFor="playerURL">
             Start by pasting a player's entire ballchasing profile URL, the one

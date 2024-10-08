@@ -77,6 +77,11 @@ const getOpposingPlayerNamesWithLinks = (replayStats, playerId) => {
   return joinNamesWithLinks(opposingPlayers);
 };
 
+const getLinkToReplay = (replayStats, linkText) => {
+  const id = replayStats["id"];
+  return `<a href="https://ballchasing.com/replay/${id}">${linkText}</a>`;
+};
+
 const getOpposingTeam = (replayStats, playerId) => {
   const { blueTeam, orangeTeam } = getTeams(replayStats);
 
@@ -279,6 +284,7 @@ export const wrappedUtils = {
   getOpposingPlayerNamesWithLinks: withReplayStats(
     getOpposingPlayerNamesWithLinks
   ),
+  getLinkToReplay: withReplayStats(getLinkToReplay),
   getAvgSpeed: withReplayStats(getAvgSpeed),
   getBPM: withReplayStats(getBPM),
   getBCPM: withReplayStats(getBCPM),

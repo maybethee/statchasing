@@ -171,12 +171,17 @@ function WinLossStats({ className }) {
 
   const options = {
     plugins: {
+      legend: {
+        labels: {
+          color: "white",
+        },
+      },
       afterDatasetsDraw: drawLabelsPlugin.afterDatasetsDraw,
     },
   };
 
   const data = {
-    labels: ["games won", "games lost"],
+    labels: ["Games Won", "Games Lost"],
     datasets: [
       {
         label: "Games",
@@ -214,7 +219,7 @@ function WinLossStats({ className }) {
             datasets: [
               {
                 // might just make a custom label...
-                label: "Games Won | Games Lost",
+                label: "Games Won               Games Lost",
                 data: combinedGoalDiffs,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,
@@ -251,6 +256,7 @@ function WinLossStats({ className }) {
                     const { datasets } = chart.data;
                     return datasets.map((dataset) => ({
                       text: dataset.label,
+                      fontColor: "white",
                       fillStyle: "transparent",
                       strokeStyle: "transparent",
                     }));

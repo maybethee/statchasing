@@ -42,6 +42,14 @@ function DateStats({ className }) {
         biggestWin,
         playerId
       );
+      const date = new Date(
+        biggestWin["replay_stats"][0]["stats"]["date"]
+      ).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const biggestWinLink = wrappedUtils.getLinkToReplay(biggestWin, date);
 
       // console.log(biggestWin["replay_stats"][0]["stats"]);
       return (
@@ -53,13 +61,7 @@ function DateStats({ className }) {
         " " +
         "on " +
         // eventually: link to replay on ballchasing?
-        new Date(
-          biggestWin["replay_stats"][0]["stats"]["date"]
-        ).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }) +
+        biggestWinLink +
         "."
       );
     } else {
