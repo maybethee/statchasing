@@ -3,7 +3,7 @@ import { wrappedUtils } from "../utils";
 import { useState, useEffect } from "react";
 import PieChart from "./PieChart";
 
-function OvertimeStats({ className }) {
+function OvertimeStats({ id, className }) {
   const { replays, playerId } = useReplays();
   const [replaysWithOvertimes, setReplaysWithOvertimes] = useState([]);
 
@@ -157,7 +157,7 @@ function OvertimeStats({ className }) {
 
   if (replaysWithOvertimes.length < 1) {
     return (
-      <div>
+      <div id={id} className={className}>
         <h3>Overtime Stats</h3>
         <p>No overtimes found.</p>
       </div>
@@ -165,7 +165,7 @@ function OvertimeStats({ className }) {
   }
 
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Overtime Stats</h3>
       <ul>
         <li>% games go to overtime: {overtimeGamesPercent()}%</li>

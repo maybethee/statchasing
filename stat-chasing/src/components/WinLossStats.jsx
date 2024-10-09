@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-function WinLossStats({ className }) {
+function WinLossStats({ id, className }) {
   const { replays, playerId } = useReplays();
 
   function gamesWonGoalDiffs() {
@@ -193,7 +193,7 @@ function WinLossStats({ className }) {
   };
 
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Win/Loss Stats</h3>
       <ul>
         <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>

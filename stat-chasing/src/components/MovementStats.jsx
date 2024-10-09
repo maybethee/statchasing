@@ -2,7 +2,7 @@ import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "../utils";
 import DoughnutChart from "./DoughnutChart";
 
-function MovementStats({ className }) {
+function MovementStats({ id, className }) {
   const { replays, playerId } = useReplays();
 
   function avgSupersonic() {
@@ -173,7 +173,7 @@ function MovementStats({ className }) {
   };
   // figure out a better system for the buttons, maybe just set up an object with button names and their associated playlist names, and only display replays under played playlists, as i did with the car stats
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Movement/Speed Stats</h3>
       <ul>
         <li>Average boost used per minute: {avgBPM()}</li>

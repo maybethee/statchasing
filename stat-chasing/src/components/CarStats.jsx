@@ -4,7 +4,7 @@ import { wrappedUtils } from "../utils";
 import pluralize from "pluralize";
 import styles from "../styles/CarStats.module.css";
 
-function CarStats({ className }) {
+function CarStats({ id, className }) {
   const { replays, playerId } = useReplays();
   const [usedCar, setUsedCar] = useState(null);
   const [usedCarArr, setUsedCarArr] = useState([]);
@@ -74,19 +74,15 @@ function CarStats({ className }) {
   if (usedCarArr.length <= 1) {
     // console.log("used carr arr:", usedCarArr);
     return (
-      <div className={className}>
-        <br />
-        <br />
+      <div id={id} className={className}>
         <h3>Car Stats</h3>
-        <br />
         <p>Only one car used, nothing to compare against.</p>
-        <br />
       </div>
     );
   }
 
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Car Stats</h3>
       <div className={styles.carsFilterSection}>
         <h4>Filter averages by used car:</h4>

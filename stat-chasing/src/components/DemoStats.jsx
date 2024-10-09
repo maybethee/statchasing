@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-function DemoStats({ className }) {
+function DemoStats({ id, className }) {
   const { replays, playerId } = useReplays();
 
   function avgDemosInflicted(replaysArr = replays) {
@@ -155,7 +155,7 @@ function DemoStats({ className }) {
   };
 
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Demolition Stats</h3>
       <ul>
         <li>Most demos in a single game: {highestDemoCount()}</li>

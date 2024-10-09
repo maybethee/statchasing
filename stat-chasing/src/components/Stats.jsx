@@ -9,6 +9,7 @@ import MapStats from "./MapStats";
 import pluralize from "pluralize";
 
 import styles from "../styles/Stats.module.css";
+// import Sidebar from "./Sidebar";
 
 function Stats() {
   const { replays, playerName } = useReplays();
@@ -33,14 +34,14 @@ function Stats() {
           {pluralize("replay", replays.length)})
         </h3>
       </div>
-      <div>
-        <CarStats className={styles.component} />
-        <WinLossStats className={styles.component} />
-        <MovementStats className={styles.component} />
-        <OvertimeStats className={styles.component} />
-        <DemoStats className={styles.component} />
-        <MapStats className={styles.component} />
-        <DateStats className={styles.component} />
+      <div className={styles.statsContainer}>
+        <CarStats id="carSection" className={styles.component} />
+        <WinLossStats id="winLossSection" className={styles.component} />
+        <MovementStats id="movementSection" className={styles.component} />
+        <OvertimeStats id="overtimeSection" className={styles.component} />
+        <DemoStats id="demoSection" className={styles.component} />
+        <MapStats id="mapSection" className={styles.component} />
+        <DateStats id="dateSection" className={styles.component} />
       </div>
     </div>
   );

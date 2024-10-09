@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { wrappedUtils } from "../utils";
 import pluralize from "pluralize";
 
-function DateStats({ className }) {
+function DateStats({ id, className }) {
   const { replays, playerId } = useReplays();
   const [biggestWin, setBiggestWin] = useState(null);
 
@@ -353,7 +353,7 @@ function DateStats({ className }) {
   }
 
   return (
-    <div className={className}>
+    <div id={id} className={className}>
       <h3>Date Stats</h3>
       <ul>
         <li dangerouslySetInnerHTML={{ __html: formatBiggestWin() }}></li>

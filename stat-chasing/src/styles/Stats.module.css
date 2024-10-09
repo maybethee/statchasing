@@ -1,3 +1,9 @@
+.statsContainer {
+  display: flex;
+  flex-flow: column;
+  /* row-gap: 3rem; */
+}
+
 .statsContainerHeader h2 {
   margin: 1.5rem 0 1rem 0;
 }
@@ -11,6 +17,7 @@
   display: flex;
   flex-flow: column wrap;
   align-items: center;
+  padding-top: 3rem;
 }
 
 .component h3 {

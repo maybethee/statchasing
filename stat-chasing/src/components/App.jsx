@@ -4,6 +4,7 @@ import { wrappedUtils } from "../utils";
 import Stats from "./Stats";
 import AdminLoginBtn from "./AdminLoginBtn";
 import styles from "../styles/App.module.css";
+import Sidebar from "./Sidebar";
 
 function App() {
   const {
@@ -26,6 +27,27 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [customDate, setCustomDate] = useState(new Date());
   const [lastPlayerId, setLastPlayerId] = useState("");
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const stickyElement = document.getElementById("sticky");
+      const offset = stickyElement.getBoundingClientRect().top;
+
+      if (offset === 0) {
+        // Adjust this value as needed
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const matchGuids = new Set();
   const initialFetch = useRef(true);
@@ -226,102 +248,132 @@ function App() {
 
   return (
     <div className={styles.pageContent}>
-      <header className={styles.mainHeader}>
-        <h1>Statchasing</h1>
-        {/* remove admin login button for production */}
-        <AdminLoginBtn />
-      </header>
-      <section className={styles.welcomeSection}>
-        <h2>Welcome</h2>
-        <p>
-          Find some interesting stats based on players' ballchasing.com
-          profiles. Currently, this only fetches replays from the last 30 days.
-        </p>
-        <p>
-          Note: due to the API rate limitations set by ballchasing, this process
-          can be *very* slow, especially if the searched for player has many
-          replays associated with them from the last 30 days.
-        </p>
-        <p>
-          Consider supporting ballchasing.com by becoming a{" "}
-          <a href="https://www.patreon.com/ballchasing">Patreon patron</a>.
-        </p>
-        <hr />
-      </section>
-      <section className={styles.playerSearchSection}>
-        {/* remove copy URL button for production */}
-        <button
-          onClick={() =>
-            navigator.clipboard.writeText(
-              "https://ballchasing.com/player/steam/76561198136291441"
-            )
-          }
-        >
-          Copy BijouBug's URL
-        </button>
-        <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
-          <label htmlFor="playerURL">
-            Start by pasting a player's entire ballchasing profile URL, the one
-            shown in the image below:
-            {/* replace link with example image */}
-            {/* (https://ballchasing.com/player/steam/76561198136291441) */}
-          </label>
-          <img
-            src="../../assets/player-profile-url.png"
-            alt="Paste the URL copied from the address bar on a player's profile on ballchasing.com. The URL should follow this pattern: https://ballchasing.com/player/platform/id, where 'platform' can be 'steam', 'epic', 'psn', 'xbox', or 'switch', and 'id' will be a numeric or alphanumeric string, or otherwise may be the player's in-game name, depending on the platform."
-          />
-          <input
-            className={styles.playerProfileInput}
-            type="text"
-            id="playerURL"
-            value={unprocessedPlayerId}
-            onChange={(e) => setUnprocessedPlayerId(e.target.value)}
-            placeholder="Enter player's ballchasing URL"
-          />
-          {isAdmin && (
-            <div>
-              <label>Select date to fetch older replays (admins only): </label>
-              <input
-                type="date"
-                value={customDate ? customDate.toISOString().split("T")[0] : ""}
-                onChange={(e) => setCustomDate(new Date(e.target.value))}
+      <div className={styles.mainRow}>
+        <div className={styles.leftCol}>
+          <header className={styles.mainHeader}>
+            <h1>Statchasing</h1>
+            {/* remove admin login button for production */}
+            <AdminLoginBtn />
+          </header>
+          <section className={styles.welcomeSection}>
+            <h2>Welcome</h2>
+            <p>
+              Find some interesting stats based on players' ballchasing.com
+              profiles. Currently, this only fetches replays from the last 30
+              days.
+            </p>
+            <p>
+              Note: due to the API rate limitations set by ballchasing, this
+              process can be *very* slow, especially if the searched for player
+              has many replays associated with them from the last 30 days.
+            </p>
+            <p>
+              Consider supporting ballchasing.com by becoming a{" "}
+              <a href="https://www.patreon.com/ballchasing">Patreon patron</a>.
+            </p>
+            <hr />
+          </section>
+
+          <section className={styles.playerSearchSection}>
+            {/* remove copy URL button for production */}
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  "https://ballchasing.com/player/steam/76561198136291441"
+                )
+              }
+            >
+              Copy BijouBug's URL
+            </button>
+            <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
+              <p>
+                Start by copying a player's entire ballchasing profile URL, the
+                one shown in the image below:
+                {/* replace link with example image */}
+                {/* (https://ballchasing.com/player/steam/76561198136291441) */}
+              </p>
+              <img
+                src="../../assets/player-profile-url.png"
+                alt="Paste the URL copied from the address bar on a player's profile on ballchasing.com. The URL should follow this pattern: https://ballchasing.com/player/platform/id, where 'platform' can be 'steam', 'epic', 'psn', 'xbox', or 'switch', and 'id' will be a numeric or alphanumeric string, or otherwise may be the player's in-game name, depending on the platform."
               />
-            </div>
-          )}
-          <div className={styles.formBtnsContainer}>
-            <button type="submit">Get Replays</button>
-            {isAdmin && (
-              <button onClick={(e) => handleSubmit(e, true)}>
-                Sync Replays
-              </button>
-            )}
-          </div>
-        </form>
-        {inputError && <p className="error">{inputError}</p>}
-      </section>
-
-      <section>
-        {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
-        {playerName && (
-          <div className={styles.playerStatsContainer}>
-            <div className={styles.playlistFilterSection}>
-              <h4>Filter by playlist:</h4>
-              <div className={styles.playlistBtnsContainer}>
-                <button onClick={() => setPlaylist(null)}>All</button>
-                <button onClick={() => setPlaylist("ranked-duels")}>1v1</button>
-                <button onClick={() => setPlaylist("ranked-doubles")}>
-                  2v2
-                </button>
-                <button onClick={() => setPlaylist("ranked-standard")}>
-                  3v3
-                </button>
+              {isAdmin && (
+                <div>
+                  <label>
+                    Select date to fetch older replays (admins only):
+                  </label>
+                  <input
+                    type="date"
+                    value={
+                      customDate ? customDate.toISOString().split("T")[0] : ""
+                    }
+                    onChange={(e) => setCustomDate(new Date(e.target.value))}
+                  />
+                </div>
+              )}
+              <div>
+                <label htmlFor="playerURL">
+                  Paste player's profile URL here:
+                  <input
+                    className={styles.playerProfileInput}
+                    type="text"
+                    id="playerURL"
+                    value={unprocessedPlayerId}
+                    onChange={(e) => setUnprocessedPlayerId(e.target.value)}
+                    placeholder="Enter player's ballchasing URL"
+                  />
+                </label>
               </div>
-            </div>
-            <Stats />
-          </div>
-        )}
-      </section>
+              <div className={styles.formBtnsContainer}>
+                <button type="submit">Get Replays</button>
+                {isAdmin && (
+                  <button onClick={(e) => handleSubmit(e, true)}>
+                    Sync Replays
+                  </button>
+                )}
+              </div>
+            </form>
+            {inputError && <p className="error">{inputError}</p>}
+          </section>
 
+          <section>
+            {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
+            {playerName && (
+              <div className={styles.playerStatsContainer}>
+                <div
+                  id="sticky"
+                  className={`${styles.playlistFilterSection} ${
+                    isSticky ? styles.sticky : ""
+                  }`}
+                >
+                  <div className={styles.filterMessage}>
+                    <div></div>
+                    <h4>Filter by playlist:</h4>
+                  </div>
+                  <div className={styles.playlistBtnsContainer}>
+                    <button onClick={() => setPlaylist(null)}>All</button>
+                    <button onClick={() => setPlaylist("ranked-duels")}>
+                      1v1
+                    </button>
+                    <button onClick={() => setPlaylist("ranked-doubles")}>
+                      2v2
+                    </button>
+                    <button onClick={() => setPlaylist("ranked-standard")}>
+                      3v3
+                    </button>
+                  </div>
+                </div>
+                <Stats />
+              </div>
+            )}
+          </section>
+        </div>
+        <div className={styles.rightCol}>
+          <div className={styles.rightColSpacer}></div>
+          {/* <div className={styles.sidebarContainer}> */}
+          <Sidebar />
+          {/* </div> */}
+        </div>
+      </div>
       <footer>
         <p>
           Source code available on{" "}

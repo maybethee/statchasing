@@ -98,8 +98,7 @@ canvas {
 
 .chart-container {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: clamp(300px, 100%, 500px);
 }
 
 a {
@@ -113,6 +112,10 @@ a:hover {
 input,
 button {
   border-radius: 5px;
+}
+
+input {
+  margin-left: 0.4rem;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -169,14 +172,80 @@ li {
 }
 
 img {
-  max-width: 400px;
+  /* max-width: 400px; */
+  width: 100%;
+
+  max-width: 700px;
 }
 
 footer {
   width: 100%;
-  height: 100%;
+  height: 300px;
   text-align: center;
   background-color: #333333;
   padding: 1rem;
   margin: 2rem 0 0 0;
+}
+
+.sidebar {
+  margin-left: 1rem;
+  position: sticky;
+  top: 10rem;
+  width: 200px;
+  height: auto;
+  background-color: #17181c;
+  align-self: flex-end;
+  padding: 0.8rem;
+  display: flex;
+  flex-flow: column;
+  row-gap: 0.4rem;
+  font-size: 1.1rem;
+}
+
+.sidebar a {
+  text-decoration: none;
+}
+
+.sidebar li {
+  display: flex;
+  flex-flow: column;
+  justify-items: center;
+  /* align-items: center; */
+
+  list-style: none;
+  padding-left: 0.3rem;
+}
+
+.sidebar li:hover,
+.sidebar li:focus {
+  border-left: 1px red solid;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  /* img {
+    width: 100%;
+  } */
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  /* ...; */
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  /* ...; */
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  /* ...; */
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+  /* ...; */
+  img {
+  }
 }
