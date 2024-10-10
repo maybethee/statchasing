@@ -199,6 +199,7 @@ function WinLossStats({ id, className }) {
         <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>
         <li>Average MVPs out of only wins: {avgMVPInWins()}</li>
       </ul>
+      {/* <div> */}
       <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
 
       <div className="chart-container bar-chart">
@@ -267,6 +268,7 @@ function WinLossStats({ id, className }) {
           }}
         />
       </div>
+      {/* </div> */}
     </div>
   );
 }

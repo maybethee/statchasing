@@ -1,23 +1,33 @@
 .statsContainer {
   display: flex;
   flex-flow: column;
-  /* row-gap: 3rem; */
 }
 
 .statsContainerHeader h2 {
   margin: 1.5rem 0 1rem 0;
 }
 
-.statsContainerHeader h3 {
-  margin-bottom: 2rem;
+.gameCount {
   font-style: italic;
+  position: sticky;
+  z-index: 1;
+  top: 4.5rem;
+  background-color: transparent;
+  transition: background-color 0.1s ease;
 }
 
+.gameCount.stuck {
+  /* padding-top: 5rem; */
+  background-color: #17181c;
+  padding-bottom: 0.5rem;
+  /* background-color: green; */
+  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+}
 .component {
   display: flex;
   flex-flow: column wrap;
   align-items: center;
-  padding-top: 3rem;
+  padding-top: 5rem;
 }
 
 .component h3 {

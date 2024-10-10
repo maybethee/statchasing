@@ -1,4 +1,5 @@
 import { useReplays } from "./ReplaysContext";
+import { useState, useEffect } from "react";
 import WinLossStats from "./WinLossStats";
 import DateStats from "./DateStats";
 import OvertimeStats from "./OvertimeStats";
@@ -13,6 +14,26 @@ import styles from "../styles/Stats.module.css";
 
 function Stats() {
   const { replays, playerName } = useReplays();
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const stickyElement = document.getElementById("stickied");
+      const offset = stickyElement.getBoundingClientRect().top;
+
+      if (offset <= 100) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   if (replays.length < 1) {
     return (
@@ -29,6 +50,11 @@ function Stats() {
     <div>
       <div className={styles.statsContainerHeader}>
         <h2>{playerName}'s Stats:</h2>
+      </div>
+      <div
+        id="stickied"
+        className={`${styles.gameCount} ${isSticky ? styles.stuck : ""}`}
+      >
         <h3>
           (based on {replays.length} fetched{" "}
           {pluralize("replay", replays.length)})

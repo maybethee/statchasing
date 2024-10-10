@@ -8,7 +8,6 @@ import Sidebar from "./Sidebar";
 
 function App() {
   const {
-    replays,
     setPrefilteredReplays,
     setPlaylist,
     loading,
@@ -35,7 +34,6 @@ function App() {
       const offset = stickyElement.getBoundingClientRect().top;
 
       if (offset === 0) {
-        // Adjust this value as needed
         setIsSticky(true);
       } else {
         setIsSticky(false);
@@ -247,9 +245,9 @@ function App() {
     );
 
   return (
-    <div className={styles.pageContent}>
-      <div className={styles.mainRow}>
-        <div className={styles.leftCol}>
+    <div className={styles.mainPageContent}>
+      <div className={styles.topRow}>
+        <div className={styles.headerSection}>
           <header className={styles.mainHeader}>
             <h1>Statchasing</h1>
             {/* remove admin login button for production */}
@@ -334,46 +332,51 @@ function App() {
             </form>
             {inputError && <p className="error">{inputError}</p>}
           </section>
-
-          <section>
-            {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
-            {playerName && (
-              <div className={styles.playerStatsContainer}>
-                <div
-                  id="sticky"
-                  className={`${styles.playlistFilterSection} ${
-                    isSticky ? styles.sticky : ""
-                  }`}
-                >
-                  <div className={styles.filterMessage}>
-                    <div></div>
-                    <h4>Filter by playlist:</h4>
-                  </div>
-                  <div className={styles.playlistBtnsContainer}>
-                    <button onClick={() => setPlaylist(null)}>All</button>
-                    <button onClick={() => setPlaylist("ranked-duels")}>
-                      1v1
-                    </button>
-                    <button onClick={() => setPlaylist("ranked-doubles")}>
-                      2v2
-                    </button>
-                    <button onClick={() => setPlaylist("ranked-standard")}>
-                      3v3
-                    </button>
-                  </div>
-                </div>
-                <Stats />
-              </div>
-            )}
-          </section>
         </div>
-        <div className={styles.rightCol}>
-          <div className={styles.rightColSpacer}></div>
-          {/* <div className={styles.sidebarContainer}> */}
-          <Sidebar />
-          {/* </div> */}
+        <div className={styles.statsSection}>
+          <div className={styles.leftCol}>
+            <section>
+              {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
+              {playerName && (
+                <div className={styles.playerStatsContainer}>
+                  <div
+                    id="sticky"
+                    className={`${styles.playlistFilterSection} ${
+                      isSticky ? styles.sticky : ""
+                    }`}
+                  >
+                    <div className={styles.filterMessage}>
+                      <div></div>
+                      <h4>Filter by playlist:</h4>
+                    </div>
+                    <div className={styles.playlistBtnsContainer}>
+                      <button onClick={() => setPlaylist(null)}>All</button>
+                      <button onClick={() => setPlaylist("ranked-duels")}>
+                        1v1
+                      </button>
+                      <button onClick={() => setPlaylist("ranked-doubles")}>
+                        2v2
+                      </button>
+                      <button onClick={() => setPlaylist("ranked-standard")}>
+                        3v3
+                      </button>
+                    </div>
+                  </div>
+                  <Stats />
+                </div>
+              )}
+            </section>
+          </div>
+
+          {playerName && (
+            <div className={styles.rightCol}>
+              {/* <div className={styles.rightColSpacer}></div> */}
+              <Sidebar />
+            </div>
+          )}
         </div>
       </div>
+
       <footer>
         <p>
           Source code available on{" "}

@@ -1,25 +1,38 @@
-.pageContent {
+.mainPageContent {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column;
 }
 
-.mainRow {
+.topRow {
   display: flex;
+  flex-flow: column;
+}
+
+.headerSection {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.statsSection {
+  display: flex;
+  position: relative;
   flex-flow: row;
+  /* position: relative; */
+  /* height: 100%; */
+  /* flex-flow: row; */
+  /* align-items: center; */
+  /* justify-content: center; */
 }
 
 .leftCol {
   display: flex;
-  /* flex-shrink: 1; */
-
-  /* flex: 0 1 auto; */
   flex-basis: auto;
   flex-flow: column;
   justify-content: center;
   align-items: center;
   row-gap: 1.5rem;
   width: 100%;
-  /* max-width: 70%; */
   position: relative;
 }
 
@@ -78,7 +91,7 @@
 
 .sticky {
   background-color: #17181c;
-  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+  /* box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5); */
 }
 
 .playlistFilterSection h4 {
@@ -106,25 +119,16 @@
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   .rightCol {
-    display: inline;
+    display: flex;
+    flex-flow: column wrap;
+    align-content: flex-start;
     position: relative;
-    height: 100%;
-    flex-basis: 200px;
+    flex-basis: 30%;
   }
-  .rightColSpacer {
-    height: 70rem;
-  }
-
-  /* .sidebarContainer {
-
-  } */
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-  /* .playlistFilterSection {
-    row-gap: 0;
-  } */
   .playerProfileInput {
     width: 550px;
   }
