@@ -9,6 +9,7 @@ import Sidebar from "./Sidebar";
 function App() {
   const {
     setPrefilteredReplays,
+    playlist,
     setPlaylist,
     loading,
     setLoading,
@@ -27,16 +28,17 @@ function App() {
   const [customDate, setCustomDate] = useState(new Date());
   const [lastPlayerId, setLastPlayerId] = useState("");
   const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const stickyElement = document.getElementById("sticky");
-      const offset = stickyElement.getBoundingClientRect().top;
-
-      if (offset === 0) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
+      if (sentinelRef.current) {
+        const offset = sentinelRef.current.getBoundingClientRect().top;
+        if (offset <= 10) {
+          setIsSticky(true);
+        } else {
+          setIsSticky(false);
+        }
       }
     };
 
@@ -339,6 +341,7 @@ function App() {
               {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
               {playerName && (
                 <div className={styles.playerStatsContainer}>
+                  <div ref={sentinelRef} className={styles.sentinel}></div>
                   <div
                     id="sticky"
                     className={`${styles.playlistFilterSection} ${
@@ -350,18 +353,37 @@ function App() {
                       <h4>Filter by playlist:</h4>
                     </div>
                     <div className={styles.playlistBtnsContainer}>
-                      <button onClick={() => setPlaylist(null)}>All</button>
-                      <button onClick={() => setPlaylist("ranked-duels")}>
+                      <button
+                        onClick={() => setPlaylist(null)}
+                        className={playlist === null ? "focused" : ""}
+                      >
+                        All
+                      </button>
+                      <button
+                        onClick={() => setPlaylist("ranked-duels")}
+                        className={playlist === "ranked-duels" ? "focused" : ""}
+                      >
                         1v1
                       </button>
-                      <button onClick={() => setPlaylist("ranked-doubles")}>
+                      <button
+                        onClick={() => setPlaylist("ranked-doubles")}
+                        className={
+                          playlist === "ranked-doubles" ? "focused" : ""
+                        }
+                      >
                         2v2
                       </button>
-                      <button onClick={() => setPlaylist("ranked-standard")}>
+                      <button
+                        onClick={() => setPlaylist("ranked-standard")}
+                        className={
+                          playlist === "ranked-standard" ? "focused" : ""
+                        }
+                      >
                         3v3
                       </button>
                     </div>
                   </div>
+
                   <Stats />
                 </div>
               )}

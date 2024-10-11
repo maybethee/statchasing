@@ -7,22 +7,30 @@
   margin: 1.5rem 0 1rem 0;
 }
 
+.sentinel {
+  position: absolute;
+  top: 4.5rem;
+  height: 1px;
+}
+
 .gameCount {
   font-style: italic;
   position: sticky;
   z-index: 1;
-  top: 4.5rem;
+  top: 4.6rem;
   background-color: transparent;
-  transition: background-color 0.1s ease;
+  transition: font-size 0.2s ease, padding 0.2s ease, box-shadow 0.2s ease;
+  will-change: padding, box-shadow, font-size;
 }
 
-.gameCount.stuck {
-  /* padding-top: 5rem; */
+.gameCount.sticky {
+  /* top: 4.6rem; */
   background-color: #17181c;
-  padding-bottom: 0.5rem;
-  /* background-color: green; */
+  padding: 0.5rem 0;
   box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+  font-size: 1rem;
 }
+
 .component {
   display: flex;
   flex-flow: column wrap;

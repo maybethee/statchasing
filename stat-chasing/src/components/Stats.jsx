@@ -1,5 +1,5 @@
 import { useReplays } from "./ReplaysContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import WinLossStats from "./WinLossStats";
 import DateStats from "./DateStats";
 import OvertimeStats from "./OvertimeStats";
@@ -15,16 +15,22 @@ import styles from "../styles/Stats.module.css";
 function Stats() {
   const { replays, playerName } = useReplays();
   const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef(null);
+  const sectionRefs = useRef([]);
+
+  useEffect(() => {
+    sectionRefs.current = sectionRefs.current.slice(0, 7);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      const stickyElement = document.getElementById("stickied");
-      const offset = stickyElement.getBoundingClientRect().top;
-
-      if (offset <= 100) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
+      if (sentinelRef.current) {
+        const offset = sentinelRef.current.getBoundingClientRect().top;
+        if (offset <= -50) {
+          setIsSticky(true);
+        } else {
+          setIsSticky(false);
+        }
       }
     };
 
@@ -51,23 +57,53 @@ function Stats() {
       <div className={styles.statsContainerHeader}>
         <h2>{playerName}'s Stats:</h2>
       </div>
-      <div
-        id="stickied"
-        className={`${styles.gameCount} ${isSticky ? styles.stuck : ""}`}
-      >
-        <h3>
+
+      <div>
+        <div ref={sentinelRef} className={styles.sentinel}></div>
+        <h3
+          id="sticky"
+          className={`${styles.gameCount} ${isSticky ? styles.sticky : ""}`}
+        >
           (based on {replays.length} fetched{" "}
           {pluralize("replay", replays.length)})
         </h3>
-      </div>
-      <div className={styles.statsContainer}>
-        <CarStats id="carSection" className={styles.component} />
-        <WinLossStats id="winLossSection" className={styles.component} />
-        <MovementStats id="movementSection" className={styles.component} />
-        <OvertimeStats id="overtimeSection" className={styles.component} />
-        <DemoStats id="demoSection" className={styles.component} />
-        <MapStats id="mapSection" className={styles.component} />
-        <DateStats id="dateSection" className={styles.component} />
+
+        {/* </div> */}
+        <CarStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="carSection"
+          className={styles.component}
+        />
+        <WinLossStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="winLossSection"
+          className={styles.component}
+        />
+        <MovementStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="movementSection"
+          className={styles.component}
+        />
+        <OvertimeStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="overtimeSection"
+          className={styles.component}
+        />
+        <DemoStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="demoSection"
+          className={styles.component}
+        />
+        <MapStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="mapSection"
+          className={styles.component}
+        />
+        <DateStats
+          ref={(el) => (sectionRefs.current[0] = el)}
+          id="dateSection"
+          className={styles.component}
+        />
       </div>
     </div>
   );

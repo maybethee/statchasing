@@ -87,10 +87,19 @@ function CarStats({ id, className }) {
       <div className={styles.carsFilterSection}>
         <h4>Filter averages by used car:</h4>
         <div className={styles.carBtnsContainer}>
-          <button onClick={() => setUsedCar(null)}>All</button>
+          <button
+            onClick={() => setUsedCar(null)}
+            className={usedCar === null ? "focused" : ""}
+          >
+            All
+          </button>
           {usedCarArr.map((car) => {
             return (
-              <button onClick={() => setUsedCar(car)} key={car}>
+              <button
+                onClick={() => setUsedCar(car)}
+                key={car}
+                className={usedCar === car ? "focused" : ""}
+              >
                 {car}
               </button>
             );

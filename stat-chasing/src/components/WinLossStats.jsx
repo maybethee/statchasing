@@ -214,13 +214,13 @@ function WinLossStats({ id, className }) {
               "1 goal",
               "2 goals",
               "3 goals",
-              "4  goals",
+              "4 goals",
               "5+ goals",
             ],
             datasets: [
               {
                 // might just make a custom label...
-                label: "Games Won               Games Lost",
+                label: "Games Won/Lost",
                 data: combinedGoalDiffs,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,

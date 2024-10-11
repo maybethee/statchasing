@@ -62,7 +62,6 @@ body {
 }
 
 #root {
-  /* display: flex; */
   margin: 0 1.5rem;
 }
 
@@ -75,6 +74,11 @@ button {
 }
 button:hover {
   background-color: #29917d;
+}
+
+button:active {
+  background-color: #217362;
+  outline: 3px solid #2d9e87;
 }
 
 input {
@@ -180,23 +184,29 @@ footer {
   width: 100%;
   height: 300px;
   text-align: center;
-  background-color: #333333;
+  /* background-color: #333333; */
   padding: 1rem;
   margin: 2rem 0 0 0;
+
+  box-shadow: 0 -10px 10px -10px rgba(0, 0, 0, 0.5);
+}
+
+.focused {
+  background-color: #217362;
+  outline: 3px solid #2d9e87;
+}
+
+.focused:hover {
+  background-color: #217362;
 }
 
 .sidebar {
   margin-left: 1rem;
   position: sticky;
   top: 13rem;
-  /* width: 200px; */
   height: auto;
   background-color: #17181c;
-  /* align-self: flex-end; */
   padding: 0.8rem;
-  /* display: flex;
-  flex-flow: column; */
-  /* row-gap: 0.4rem; */
   font-size: 1.1rem;
 }
 
@@ -209,19 +219,23 @@ footer {
   flex-flow: column;
   justify-items: center;
   list-style: none;
+}
+
+.sidebar li a {
   padding-left: 0.3rem;
 }
 
-.sidebar li:hover,
-.sidebar li:focus {
-  border-left: 2px #2d9e87 solid;
+.sidebar li a:hover {
+  border-left: 3px #2d9e87 solid;
+}
+
+.sidebar-focused {
+  color: #e6e8ef;
+  border-left: 3px #2d9e87 solid;
 }
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
-  /* img {
-    width: 100%;
-  } */
 }
 
 /* Medium devices (tablets, 768px and up) */

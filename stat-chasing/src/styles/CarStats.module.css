@@ -4,6 +4,7 @@
   justify-content: center;
   gap: 0.5rem;
   margin-bottom: 0.7rem;
+  margin-left: 0.3rem;
 }
 
 .carsFilterSection {
@@ -15,7 +16,6 @@
 
 .carsFilterSection h4 {
   font-style: italic;
-  /* text-align: center; */
 }
 
 .carBtnsContainer button {
