@@ -185,6 +185,7 @@ function MovementStats({ id, className }) {
         data={data}
         options={options}
         plugins={[centerTextPlugin, drawLabelsPlugin]}
+        header="Percent of time spent at different&nbsp;speeds"
       />
     </div>
   );

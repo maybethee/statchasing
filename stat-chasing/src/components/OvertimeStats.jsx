@@ -173,7 +173,12 @@ function OvertimeStats({ id, className }) {
         <li>Longest overtime win: {longestOvertimeWin()}</li>
         <li>Longest overtime loss: {longestOvertimeLoss()}</li>
       </ul>
-      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
+      <PieChart
+        data={data}
+        options={options}
+        plugins={[drawLabelsPlugin]}
+        header="Overtimes win/loss ratio"
+      />
     </div>
   );
 }

@@ -18,8 +18,9 @@ ChartJS.register(
   Legend
 );
 
-const PieChart = ({ data, options, plugins }) => (
+const PieChart = ({ data, options, plugins, header }) => (
   <div className="chart-container">
+    <h3 className="chart-header">{header}</h3>
     <Pie data={data} options={options} plugins={plugins} />
   </div>
 );

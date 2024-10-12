@@ -18,8 +18,9 @@ ChartJS.register(
   Legend
 );
 
-const DoughnutChart = ({ data, options, plugins }) => (
+const DoughnutChart = ({ data, options, plugins, header }) => (
   <div className="chart-container">
+    <h3 className="chart-header">{header}</h3>
     <Doughnut data={data} options={options} plugins={plugins} />
   </div>
 );

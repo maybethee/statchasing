@@ -16,11 +16,6 @@ function Stats() {
   const { replays, playerName } = useReplays();
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef(null);
-  const sectionRefs = useRef([]);
-
-  useEffect(() => {
-    sectionRefs.current = sectionRefs.current.slice(0, 7);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,52 +53,25 @@ function Stats() {
         <h2>{playerName}'s Stats:</h2>
       </div>
 
-      <div>
-        <div ref={sentinelRef} className={styles.sentinel}></div>
-        <h3
-          id="sticky"
-          className={`${styles.gameCount} ${isSticky ? styles.sticky : ""}`}
-        >
-          (based on {replays.length} fetched{" "}
-          {pluralize("replay", replays.length)})
-        </h3>
+      {/* <div> */}
+      <div ref={sentinelRef} className={styles.sentinel}></div>
+      <h3
+        id="sticky"
+        className={`${styles.gameCount} ${isSticky ? styles.sticky : ""}`}
+      >
+        (based on {replays.length} fetched {pluralize("replay", replays.length)}
+        )
+      </h3>
 
-        {/* </div> */}
-        <CarStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="carSection"
-          className={styles.component}
-        />
-        <WinLossStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="winLossSection"
-          className={styles.component}
-        />
-        <MovementStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="movementSection"
-          className={styles.component}
-        />
-        <OvertimeStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="overtimeSection"
-          className={styles.component}
-        />
-        <DemoStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="demoSection"
-          className={styles.component}
-        />
-        <MapStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="mapSection"
-          className={styles.component}
-        />
-        <DateStats
-          ref={(el) => (sectionRefs.current[0] = el)}
-          id="dateSection"
-          className={styles.component}
-        />
+      {/* </div> */}
+      <div className={styles.statsContainer}>
+        <CarStats id="carSection" className={styles.component} />
+        <WinLossStats id="winLossSection" className={styles.component} />
+        <MovementStats id="movementSection" className={styles.component} />
+        <OvertimeStats id="overtimeSection" className={styles.component} />
+        <DemoStats id="demoSection" className={styles.component} />
+        <MapStats id="mapSection" className={styles.component} />
+        <DateStats id="dateSection" className={styles.component} />
       </div>
     </div>
   );

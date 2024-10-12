@@ -36,6 +36,7 @@
   flex-flow: column wrap;
   align-items: center;
   padding-top: 5rem;
+  /* row-gap: 1rem; */
 }
 
 .component h3 {

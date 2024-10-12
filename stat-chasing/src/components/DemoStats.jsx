@@ -161,7 +161,20 @@ function DemoStats({ id, className }) {
         <li>Most demos in a single game: {highestDemoCount()}</li>
       </ul>
 
-      <div className="chart-container bar-chart">
+      {avgDemosInflicted() > 0 && avgDemosTaken() > 0 ? (
+        <PieChart
+          data={data}
+          options={options}
+          plugins={[drawLabelsPlugin]}
+          header="Average demos inflicted/taken per&nbsp;game"
+        />
+      ) : null}
+
+      <div className="bar-chart">
+        <h3 className="chart-header">
+          Average demos inflicted/taken per game in wins and&nbsp;losses
+        </h3>
+
         <Bar
           data={avgDemoStatsData}
           options={{
@@ -177,8 +190,8 @@ function DemoStats({ id, className }) {
             scales: {
               y: {
                 ticks: {
-                  stepSize: 0.2,
-                  color: "rgba(230, 232, 239, 0.7)",
+                  stepSize: 0.5,
+                  color: "rgb(230, 232, 239)",
                 },
                 grid: {
                   color: "rgba(230, 232, 239, 0.2)",
@@ -186,7 +199,7 @@ function DemoStats({ id, className }) {
               },
               x: {
                 ticks: {
-                  color: "rgba(230, 232, 239, 0.7)",
+                  color: "rgb(230, 232, 239)",
                 },
                 grid: {
                   color: "rgba(230, 232, 239, 0.2)",
@@ -196,10 +209,6 @@ function DemoStats({ id, className }) {
           }}
         />
       </div>
-
-      {avgDemosInflicted() > 0 && avgDemosTaken() > 0 ? (
-        <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
-      ) : null}
     </div>
   );
 }

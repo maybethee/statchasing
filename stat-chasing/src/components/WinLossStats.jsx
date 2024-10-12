@@ -199,28 +199,45 @@ function WinLossStats({ id, className }) {
         <li>Average MVPs out of all games: {avgMVPInAllGames()}</li>
         <li>Average MVPs out of only wins: {avgMVPInWins()}</li>
       </ul>
-      {/* <div> */}
-      <PieChart data={data} options={options} plugins={[drawLabelsPlugin]} />
 
-      <div className="chart-container bar-chart">
+      <PieChart
+        data={data}
+        options={options}
+        plugins={[drawLabelsPlugin]}
+        header="Win/Loss ratio"
+      />
+
+      <div className="bar-chart">
+        <div>
+          <h3 className="chart-header">Games by goal difference</h3>
+          <div className="bar-chart-label">
+            <div>
+              <span
+                className="bar-chart-label-span"
+                style={{
+                  backgroundColor: "rgb(54, 162, 235)",
+                }}
+              ></span>
+              <p>Wins</p>
+            </div>
+            <div>
+              <span
+                className="bar-chart-label-span"
+                style={{
+                  backgroundColor: "rgb(255, 95, 132)",
+                }}
+              ></span>
+              <p>Losses</p>
+            </div>
+          </div>
+        </div>
         <Bar
           data={{
-            labels: [
-              "5+ goals",
-              "4 goals",
-              "3 goals",
-              "2 goals",
-              "1 goal",
-              "1 goal",
-              "2 goals",
-              "3 goals",
-              "4 goals",
-              "5+ goals",
-            ],
+            labels: ["5+", "4", "3", "2", "1", "1", "2", "3", "4", "5+"],
             datasets: [
               {
                 // might just make a custom label...
-                label: "Games Won/Lost",
+                label: "",
                 data: combinedGoalDiffs,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,
@@ -233,9 +250,14 @@ function WinLossStats({ id, className }) {
             responsive: true,
             scales: {
               y: {
+                title: {
+                  display: true,
+                  text: "Number of Games",
+                  color: "rgb(230, 232, 239)",
+                },
                 ticks: {
                   stepSize: 1,
-                  color: "rgba(230, 232, 239, 0.7)",
+                  color: "rgb(230, 232, 239)",
                 },
                 grid: {
                   color: "rgba(230, 232, 239, 0.2)",
@@ -243,7 +265,7 @@ function WinLossStats({ id, className }) {
               },
               x: {
                 ticks: {
-                  color: "rgba(230, 232, 239, 0.7)",
+                  color: "rgb(230, 232, 239)",
                 },
                 grid: {
                   color: "rgba(230, 232, 239, 0.2)",
@@ -268,7 +290,6 @@ function WinLossStats({ id, className }) {
           }}
         />
       </div>
-      {/* </div> */}
     </div>
   );
 }
