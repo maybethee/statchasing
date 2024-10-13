@@ -59,6 +59,12 @@
   padding: 0.6rem;
 }
 
+.adminFormSection {
+  display: flex;
+  flex-flow: column;
+  row-gap: 1rem;
+}
+
 .playerProfileInput {
   width: 400px;
 }
@@ -92,7 +98,6 @@
 
 .sticky {
   background-color: #17181c;
-
   font-size: 0.8rem;
 }
 

@@ -5,6 +5,7 @@ import Stats from "./Stats";
 import AdminLoginBtn from "./AdminLoginBtn";
 import styles from "../styles/App.module.css";
 import Sidebar from "./Sidebar";
+import { openDB } from "idb";
 
 function App() {
   const {
@@ -29,6 +30,61 @@ function App() {
   const [lastPlayerId, setLastPlayerId] = useState("");
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef(null);
+  const [fetchNewReplays, setFetchNewReplays] = useState(false);
+
+  const initDB = async () => {
+    return openDB("ReplayDB", 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains("replays")) {
+          db.createObjectStore("replays", { keyPath: "playerId" });
+        }
+      },
+    });
+  };
+
+  const saveReplaysToIndexedDB = async (playerId, replays, name) => {
+    const db = await initDB();
+    await db.put("replays", { playerId, replays, name });
+  };
+
+  const getReplaysFromIndexedDB = async (playerId) => {
+    const db = await initDB();
+    return (await db.get("replays", playerId)) || "";
+  };
+
+  useEffect(() => {
+    const fetchCachedPlayer = async () => {
+      const cachedPlayerId = localStorage.getItem("cachedPlayerId");
+
+      console.log("fetch cached player, playerID:", cachedPlayerId);
+
+      if (cachedPlayerId) {
+        try {
+          const db = await initDB();
+          const cachedPlayer = await db.get("replays", cachedPlayerId);
+          console.log(
+            "cached player ID exists, this is the cached player:",
+            cachedPlayer
+          );
+          if (cachedPlayer && cachedPlayer.replays) {
+            console.log(
+              "cached player has replays, here they are:",
+              cachedPlayer.replays
+            );
+            setPrefilteredReplays(cachedPlayer.replays);
+            setPlayerId(cachedPlayerId);
+            setLastPlayerId(cachedPlayerId);
+          }
+        } catch (error) {
+          console.error(
+            "Error fetching cached player data from IndexedDB:",
+            error
+          );
+        }
+      }
+    };
+    fetchCachedPlayer();
+  }, [setPrefilteredReplays, setPlayerName, setPlayerId]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,7 +133,31 @@ function App() {
     checkAdminStatus();
   }, []);
 
-  const fetchReplays = async (playerId, afterDate = null, sync = false) => {
+  const fetchReplays = async (
+    playerId,
+    afterDate = null,
+    sync = false,
+    fetchNewReplays = false
+  ) => {
+    if (!sync && !fetchNewReplays) {
+      const cachedPlayerId =
+        playerId || localStorage.getItem("cachedPlayerId") || "";
+      // console.log(`looking for data from playerID: ${cachedPlayerId}`);
+
+      const cachedReplays = await getReplaysFromIndexedDB(cachedPlayerId);
+
+      if (cachedReplays) {
+        // console.log(`found cached replays for playerId: ${playerId}`);
+        // console.log("here are the replays:", cachedReplays.replays);
+        setPrefilteredReplays(cachedReplays.replays);
+        setPlayerName(cachedReplays.name);
+        localStorage.setItem("cachedPlayerId", playerId);
+        setLastPlayerId(playerId);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       const startTime = new Date().getTime();
 
@@ -122,7 +202,6 @@ function App() {
           return true;
         }
       });
-      console.log("Unique replays:", uniqueReplays);
 
       // refactor this?
       if (uniqueReplays.length > 0) {
@@ -165,7 +244,20 @@ function App() {
           return sortedReplaysArr;
         });
 
-        await setPlayerNameUsingReplay(uniqueReplays, playerId);
+        const fetchedPlayerName = wrappedUtils.getPlayerNameById(
+          uniqueReplays[0],
+          playerId
+        );
+
+        setPlayerName(fetchedPlayerName);
+
+        await saveReplaysToIndexedDB(
+          playerId,
+          uniqueReplays,
+          fetchedPlayerName
+        );
+
+        localStorage.setItem("cachedPlayerId", playerId);
 
         if (playerId !== lastPlayerId) {
           setPrefilteredReplays([...uniqueReplays]);
@@ -185,15 +277,6 @@ function App() {
     }
   };
 
-  const setPlayerNameUsingReplay = async (prefilteredReplays, playerId) => {
-    // const splitId = playerId.split(":")[1];
-    const newPlayerName = wrappedUtils.getPlayerNameById(
-      prefilteredReplays[0],
-      playerId
-    );
-    setPlayerName(newPlayerName);
-  };
-
   const handleSubmit = (e, sync = false) => {
     e.preventDefault();
     setLoading(true);
@@ -202,6 +285,7 @@ function App() {
     if (unprocessedPlayerId !== lastPlayerId) {
       setPrefilteredReplays([]);
       setLastPlayerId(unprocessedPlayerId);
+      localStorage.removeItem("cachedPlayerId");
     }
 
     const urlPattern =
@@ -225,6 +309,8 @@ function App() {
 
     if (sync) {
       fetchReplays(trimmedPlayerId, null, true);
+    } else if (fetchNewReplays) {
+      fetchReplays(trimmedPlayerId, afterDate, false, true);
     } else {
       fetchReplays(trimmedPlayerId, afterDate);
     }
@@ -285,6 +371,27 @@ function App() {
             >
               Copy BijouBug's URL
             </button>
+
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  "https://ballchasing.com/player/steam/76561198835242233"
+                )
+              }
+            >
+              Copy Tofu's URL
+            </button>
+
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  "https://ballchasing.com/player/epic/b843b77c31e74c6fa970db08f5796805"
+                )
+              }
+            >
+              Copy Andre's URL
+            </button>
+
             <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
               <p>
                 Start by copying a player's entire ballchasing profile URL, the
@@ -297,17 +404,30 @@ function App() {
                 alt="Paste the URL copied from the address bar on a player's profile on ballchasing.com. The URL should follow this pattern: https://ballchasing.com/player/platform/id, where 'platform' can be 'steam', 'epic', 'psn', 'xbox', or 'switch', and 'id' will be a numeric or alphanumeric string, or otherwise may be the player's in-game name, depending on the platform."
               />
               {isAdmin && (
-                <div>
-                  <label>
-                    Select date to fetch older replays (admins only):
-                  </label>
-                  <input
-                    type="date"
-                    value={
-                      customDate ? customDate.toISOString().split("T")[0] : ""
-                    }
-                    onChange={(e) => setCustomDate(new Date(e.target.value))}
-                  />
+                <div className={styles.adminFormSection}>
+                  <div>
+                    <label>
+                      Fetch new replays (if unchecked, chached data will be
+                      used):
+                      <input
+                        type="checkbox"
+                        checked={fetchNewReplays}
+                        onChange={(e) => setFetchNewReplays(e.target.checked)}
+                      />
+                    </label>
+                  </div>
+                  <div>
+                    <label>
+                      Select date to fetch older replays (admins only):
+                    </label>
+                    <input
+                      type="date"
+                      value={
+                        customDate ? customDate.toISOString().split("T")[0] : ""
+                      }
+                      onChange={(e) => setCustomDate(new Date(e.target.value))}
+                    />
+                  </div>
                 </div>
               )}
               <div>
