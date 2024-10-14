@@ -1,4 +1,4 @@
-import { useReplays } from "./ReplaysContext";
+import { useReplays } from "../ReplaysContext";
 import { useState, useEffect, useRef } from "react";
 import WinLossStats from "./WinLossStats";
 import DateStats from "./DateStats";
@@ -9,8 +9,7 @@ import CarStats from "./CarStats";
 import MapStats from "./MapStats";
 import pluralize from "pluralize";
 
-import styles from "../styles/Stats.module.css";
-// import Sidebar from "./Sidebar";
+import styles from "../../styles/Stats.module.css";
 
 function Stats() {
   const { replays, playerName } = useReplays();
@@ -36,7 +35,7 @@ function Stats() {
     };
   }, []);
 
-  if (replays.length < 1) {
+  if (!replays.length) {
     return (
       <div className={styles.statsContainerHeader}>
         <div>

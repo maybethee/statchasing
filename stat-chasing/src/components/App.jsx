@@ -1,17 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "../utils";
-import Stats from "./Stats";
-import AdminLoginBtn from "./AdminLoginBtn";
-import styles from "../styles/App.module.css";
+import { wrappedUtils } from "../utils/utils";
+import AdminLoginBtn from "./admin/AdminLoginBtn";
+import AdminAuxBtns from "./admin/AdminAuxBtns";
+import PlaylistFilter from "./PlaylistFilter";
 import Sidebar from "./Sidebar";
-import { openDB } from "idb";
+import Stats from "./stats/Stats";
+import {
+  saveReplaysToIndexedDB,
+  getReplaysFromIndexedDB,
+} from "../helpers/dbHelpers";
+import styles from "../styles/App.module.css";
 
 function App() {
   const {
     setPrefilteredReplays,
-    playlist,
-    setPlaylist,
     loading,
     setLoading,
     error,
@@ -32,48 +35,25 @@ function App() {
   const sentinelRef = useRef(null);
   const [fetchNewReplays, setFetchNewReplays] = useState(false);
 
-  const initDB = async () => {
-    return openDB("ReplayDB", 1, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains("replays")) {
-          db.createObjectStore("replays", { keyPath: "playerId" });
-        }
-      },
-    });
-  };
-
-  const saveReplaysToIndexedDB = async (playerId, replays, name) => {
-    const db = await initDB();
-    await db.put("replays", { playerId, replays, name });
-  };
-
-  const getReplaysFromIndexedDB = async (playerId) => {
-    const db = await initDB();
-    return (await db.get("replays", playerId)) || "";
-  };
-
   useEffect(() => {
     const fetchCachedPlayer = async () => {
       const cachedPlayerId = localStorage.getItem("cachedPlayerId");
-
       console.log("fetch cached player, playerID:", cachedPlayerId);
 
       if (cachedPlayerId) {
         try {
-          const db = await initDB();
-          const cachedPlayer = await db.get("replays", cachedPlayerId);
+          const cachedPlayer = await getReplaysFromIndexedDB(cachedPlayerId);
           console.log(
             "cached player ID exists, this is the cached player:",
             cachedPlayer
           );
-          if (cachedPlayer && cachedPlayer.replays) {
+          if (cachedPlayer?.replays) {
             console.log(
               "cached player has replays, here they are:",
               cachedPlayer.replays
             );
-            setPrefilteredReplays(cachedPlayer.replays);
+            renderCachedReplays(cachedPlayerId, cachedPlayer);
             setPlayerId(cachedPlayerId);
-            setLastPlayerId(cachedPlayerId);
           }
         } catch (error) {
           console.error(
@@ -84,7 +64,7 @@ function App() {
       }
     };
     fetchCachedPlayer();
-  }, [setPrefilteredReplays, setPlayerName, setPlayerId]);
+  }, [setPrefilteredReplays]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -133,41 +113,46 @@ function App() {
     checkAdminStatus();
   }, []);
 
+  const renderCachedReplays = (cachedPlayerId, cachedReplays) => {
+    console.log(`found cached replays for playerId: ${cachedPlayerId}`);
+    console.log("here are the replays:", cachedReplays.replays);
+    setPrefilteredReplays(cachedReplays.replays);
+    setPlayerName(cachedReplays.name);
+    localStorage.setItem("cachedPlayerId", cachedPlayerId);
+    setLastPlayerId(playerId);
+    // console.log("playerId value:", playerId);
+    setLoading(false);
+  };
+
+  const getUniqueReplays = (data) => {
+    return data.filter((replay) => {
+      const matchGuid = replay["replay_stats"][0]["stats"]["match_guid"];
+      if (matchGuids.has(matchGuid)) return false;
+
+      matchGuids.add(matchGuid);
+      return true;
+    });
+  };
+
   const fetchReplays = async (
     playerId,
     afterDate = null,
     sync = false,
-    fetchNewReplays = false
+    fetchNewReplays
   ) => {
+    console.log("playerId at start of fetchReplays:", playerId);
+    console.log("fetchnewreplays:", fetchNewReplays);
     if (!sync && !fetchNewReplays) {
-      const cachedPlayerId =
-        playerId || localStorage.getItem("cachedPlayerId") || "";
-      // console.log(`looking for data from playerID: ${cachedPlayerId}`);
-
+      const cachedPlayerId = localStorage.getItem("cachedPlayerId") || "";
+      console.log(`looking for data from playerID: ${cachedPlayerId}`);
       const cachedReplays = await getReplaysFromIndexedDB(cachedPlayerId);
-
-      if (cachedReplays) {
-        // console.log(`found cached replays for playerId: ${playerId}`);
-        // console.log("here are the replays:", cachedReplays.replays);
-        setPrefilteredReplays(cachedReplays.replays);
-        setPlayerName(cachedReplays.name);
-        localStorage.setItem("cachedPlayerId", playerId);
-        setLastPlayerId(playerId);
-        setLoading(false);
-        return;
-      }
+      if (cachedReplays)
+        return renderCachedReplays(cachedPlayerId, cachedReplays);
     }
 
     try {
+      setLoading(true);
       const startTime = new Date().getTime();
-
-      const requestBody = { player_id: playerId };
-      if (afterDate) {
-        requestBody.after_date = afterDate;
-      }
-      if (sync) {
-        requestBody.sync = true;
-      }
 
       const response = await fetch(
         `http://localhost:3000/${
@@ -193,56 +178,13 @@ function App() {
 
       const data = await response.json();
       console.log("fetched replays:", data);
+      const uniqueReplays = getUniqueReplays(data);
 
-      const uniqueReplays = data.filter((replay) => {
-        if (matchGuids.has(replay["replay_stats"][0]["stats"]["match_guid"])) {
-          return false;
-        } else {
-          matchGuids.add(replay["replay_stats"][0]["stats"]["match_guid"]);
-          return true;
-        }
-      });
-
-      // refactor this?
-      if (uniqueReplays.length > 0) {
-        setPrefilteredReplays((prevReplays) => {
-          matchGuids.clear();
-
-          // console.log("match guids set:", matchGuids);
-          // console.log("prev replays:", prevReplays);
-          console.log("unique replays:", uniqueReplays);
-
-          const combinedReplays = [...prevReplays, ...uniqueReplays].filter(
-            (replay) => {
-              // console.log("Checking replay:", replay);
-              // console.log(
-              //   "match guid:",
-              //   replay["replay_stats"][0]["stats"]["match_guid"]
-              // );
-              if (
-                matchGuids.has(replay["replay_stats"][0]["stats"]["match_guid"])
-              ) {
-                return false;
-              } else {
-                matchGuids.add(
-                  replay["replay_stats"][0]["stats"]["match_guid"]
-                );
-                return true;
-              }
-            }
-          );
-          const sortedReplaysArr = combinedReplays.sort(
-            (a, b) => new Date(a["data"]["date"] - new Date(b["data"]["date"]))
-          );
-
-          // console.log(
-          //   "replays, sorted:",
-          //   sortedReplaysArr.forEach((replay) => {
-          //     console.log(replay);
-          //   })
-          // );
-          return sortedReplaysArr;
-        });
+      if (uniqueReplays.length) {
+        const sortedReplays = [...uniqueReplays].sort(
+          (a, b) => new Date(a.data.date) - new Date(b.data.date)
+        );
+        setPrefilteredReplays(sortedReplays);
 
         const fetchedPlayerName = wrappedUtils.getPlayerNameById(
           uniqueReplays[0],
@@ -279,17 +221,17 @@ function App() {
 
   const handleSubmit = (e, sync = false) => {
     e.preventDefault();
-    setLoading(true);
     setInputError(null);
 
     if (unprocessedPlayerId !== lastPlayerId) {
-      setPrefilteredReplays([]);
-      setLastPlayerId(unprocessedPlayerId);
       localStorage.removeItem("cachedPlayerId");
+      setLastPlayerId(unprocessedPlayerId);
+      setPrefilteredReplays([]);
     }
 
     const urlPattern =
       /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9_]+)$/;
+
     const match = unprocessedPlayerId.match(urlPattern);
 
     if (!match) {
@@ -302,18 +244,13 @@ function App() {
 
     const trimmedPlayerId = match[1].replace("/", ":");
     setPlayerId(trimmedPlayerId);
+    localStorage.setItem("cachedPlayerId", trimmedPlayerId);
 
     const afterDate = isAdmin
       ? customDate.toISOString().split(".")[0] + "Z"
       : null;
 
-    if (sync) {
-      fetchReplays(trimmedPlayerId, null, true);
-    } else if (fetchNewReplays) {
-      fetchReplays(trimmedPlayerId, afterDate, false, true);
-    } else {
-      fetchReplays(trimmedPlayerId, afterDate);
-    }
+    fetchReplays(trimmedPlayerId, afterDate, sync, fetchNewReplays);
   };
 
   useEffect(() => {
@@ -361,43 +298,12 @@ function App() {
           </section>
 
           <section className={styles.playerSearchSection}>
-            {/* remove copy URL button for production */}
-            <button
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  "https://ballchasing.com/player/steam/76561198136291441"
-                )
-              }
-            >
-              Copy BijouBug's URL
-            </button>
-
-            <button
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  "https://ballchasing.com/player/steam/76561198835242233"
-                )
-              }
-            >
-              Copy Tofu's URL
-            </button>
-
-            <button
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  "https://ballchasing.com/player/epic/b843b77c31e74c6fa970db08f5796805"
-                )
-              }
-            >
-              Copy Andre's URL
-            </button>
+            {isAdmin && <AdminAuxBtns className={styles.adminAuxBtns} />}
 
             <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
               <p>
                 Start by copying a player's entire ballchasing profile URL, the
                 one shown in the image below:
-                {/* replace link with example image */}
-                {/* (https://ballchasing.com/player/steam/76561198136291441) */}
               </p>
               <img
                 src="../../assets/player-profile-url.png"
@@ -412,7 +318,11 @@ function App() {
                       <input
                         type="checkbox"
                         checked={fetchNewReplays}
-                        onChange={(e) => setFetchNewReplays(e.target.checked)}
+                        onChange={
+                          (e) => setFetchNewReplays(e.target.checked)
+
+                          //  setFetchNewReplays(e.target.checked)
+                        }
                       />
                     </label>
                   </div>
@@ -468,42 +378,8 @@ function App() {
                       isSticky ? styles.sticky : ""
                     }`}
                   >
-                    <div className={styles.filterMessage}>
-                      <div></div>
-                      <h4>Filter by playlist:</h4>
-                    </div>
-                    <div className={styles.playlistBtnsContainer}>
-                      <button
-                        onClick={() => setPlaylist(null)}
-                        className={playlist === null ? "focused" : ""}
-                      >
-                        All
-                      </button>
-                      <button
-                        onClick={() => setPlaylist("ranked-duels")}
-                        className={playlist === "ranked-duels" ? "focused" : ""}
-                      >
-                        1v1
-                      </button>
-                      <button
-                        onClick={() => setPlaylist("ranked-doubles")}
-                        className={
-                          playlist === "ranked-doubles" ? "focused" : ""
-                        }
-                      >
-                        2v2
-                      </button>
-                      <button
-                        onClick={() => setPlaylist("ranked-standard")}
-                        className={
-                          playlist === "ranked-standard" ? "focused" : ""
-                        }
-                      >
-                        3v3
-                      </button>
-                    </div>
+                    <PlaylistFilter />
                   </div>
-
                   <Stats />
                 </div>
               )}
@@ -512,7 +388,6 @@ function App() {
 
           {playerName && (
             <div className={styles.rightCol}>
-              {/* <div className={styles.rightColSpacer}></div> */}
               <Sidebar />
             </div>
           )}

@@ -39,6 +39,10 @@
   margin: 1rem 0;
 }
 
+.welcomeSection {
+  margin-bottom: 2rem;
+}
+
 .welcomeSection p {
   margin: 1rem 0;
 }
@@ -57,6 +61,16 @@
 
 .playerSearchForm button {
   padding: 0.6rem;
+}
+
+.adminAuxBtns {
+  display: flex;
+  flex-flow: row;
+  column-gap: 0.5rem;
+}
+
+.adminAuxBtns button {
+  padding: 0.3rem;
 }
 
 .adminFormSection {

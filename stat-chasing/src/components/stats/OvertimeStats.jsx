@@ -1,14 +1,14 @@
-import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "../utils";
+import { useReplays } from "../ReplaysContext";
+import { wrappedUtils } from "../../utils/utils";
 import { useState, useEffect } from "react";
-import PieChart from "./PieChart";
+import PieChart from "../charts/PieChart";
 
 function OvertimeStats({ id, className }) {
   const { replays, playerId } = useReplays();
   const [replaysWithOvertimes, setReplaysWithOvertimes] = useState([]);
 
   useEffect(() => {
-    if (replays.length > 0) {
+    if (replays.length) {
       const overtimes = replays.filter((replay) =>
         wrappedUtils.getOvertimeSeconds(replay)
       );

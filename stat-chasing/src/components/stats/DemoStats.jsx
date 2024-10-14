@@ -1,6 +1,6 @@
-import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "../utils";
-import PieChart from "./PieChart";
+import { useReplays } from "../ReplaysContext";
+import { wrappedUtils } from "../../utils/utils";
+import PieChart from "../charts/PieChart";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -87,7 +87,6 @@ function DemoStats({ id, className }) {
         label: "Inflicted",
         data: [demosInWins()[0], demosInLosses()[0]],
         backgroundColor: "rgb(54, 162, 235)",
-        // hoverOffset: 4,
       },
       {
         label: "Taken",

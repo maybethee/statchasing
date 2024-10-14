@@ -11,7 +11,10 @@ const withReplayStats =
 
 const findPlayerById = (team, playerId) => {
   // split playerId
+  // console.log("team:", team);
+  // console.log("player id:", playerId);
   const splitId = playerId.split(":")[1];
+  // console.log("split id:", splitId);
   return team ? team.find((player) => player["id"]["id"] === splitId) : null;
 };
 
@@ -236,10 +239,10 @@ const getOvertimeSeconds = (replayStats) => {
 
 const getMainCoreStats = (replayStats, playerId) => {
   const playerStats = getPlayerStats(replayStats, playerId);
-  // console.log("replay stats:", replayStats);
-  // console.log("player id:", playerId);
-  // console.log("player:", playerStats);
   if (!playerStats || !playerStats["core"]) {
+    // console.log("replay stats:", replayStats);
+    // console.log("player id:", playerId);
+    // console.log("player:", playerStats);
     console.error("Invalid player stats");
     return {};
   }

@@ -1,7 +1,7 @@
-import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "../utils";
+import { useReplays } from "../ReplaysContext";
+import { wrappedUtils } from "../../utils/utils";
 // import { useState, useEffect } from "react";
-import PieChart from "./PieChart";
+import PieChart from "../charts/PieChart";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,

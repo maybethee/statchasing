@@ -1,6 +1,6 @@
-import { useReplays } from "./ReplaysContext";
+import { useReplays } from "../ReplaysContext";
 import { useState, useEffect } from "react";
-import { wrappedUtils } from "../utils";
+import { wrappedUtils } from "../../utils/utils";
 import pluralize from "pluralize";
 
 function DateStats({ id, className }) {
@@ -8,7 +8,7 @@ function DateStats({ id, className }) {
   const [biggestWin, setBiggestWin] = useState(null);
 
   useEffect(() => {
-    if (replays.length > 0) {
+    if (replays.length) {
       setBiggestWin(highestGoalDifferenceGame());
     }
   }, [replays]);
@@ -22,7 +22,7 @@ function DateStats({ id, className }) {
 
     // console.log("Winning Replays:", winningReplays);
 
-    if (winningReplays.length > 0) {
+    if (winningReplays.length) {
       return winningReplays.reduce((maxReplay, replay) => {
         const maxGoalDiff = wrappedUtils.getGoalDifference(maxReplay);
         const currentGoalDiff = wrappedUtils.getGoalDifference(replay);

@@ -1,5 +1,5 @@
-import { useReplays } from "./ReplaysContext";
-import { wrappedUtils } from "../utils";
+import { useReplays } from "../ReplaysContext";
+import { wrappedUtils } from "../../utils/utils";
 import pluralize from "pluralize";
 
 function MapStats({ id, className }) {

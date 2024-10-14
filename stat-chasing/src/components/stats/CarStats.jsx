@@ -1,16 +1,23 @@
-import { useReplays } from "./ReplaysContext";
+import { useReplays } from "../ReplaysContext";
 import { useEffect, useState } from "react";
-import { wrappedUtils } from "../utils";
+import { wrappedUtils } from "../../utils/utils";
 import pluralize from "pluralize";
-import styles from "../styles/CarStats.module.css";
+import styles from "../../styles/CarStats.module.css";
 
 function CarStats({ id, className }) {
   const { replays, playerId } = useReplays();
   const [usedCar, setUsedCar] = useState(null);
   const [usedCarArr, setUsedCarArr] = useState([]);
+  const [coreStatAvgs, setCoreStatAvgs] = useState(null);
 
   useEffect(() => {
-    if (replays.length > 0) {
+    if (replays.length) {
+      setCoreStatAvgs(avgMainCoreStats());
+    }
+  }, [replays, usedCar]);
+
+  useEffect(() => {
+    if (replays.length) {
       let usedCars = [];
 
       replays.forEach((replay) => {
@@ -67,8 +74,6 @@ function CarStats({ id, className }) {
 
     return coreStatAvgs;
   }
-
-  const coreStatAvgs = avgMainCoreStats();
 
   // don't display if only one car
   if (usedCarArr.length <= 1) {
