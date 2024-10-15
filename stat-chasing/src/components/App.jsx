@@ -119,7 +119,7 @@ function App() {
     setPrefilteredReplays(cachedReplays.replays);
     setPlayerName(cachedReplays.name);
     localStorage.setItem("cachedPlayerId", cachedPlayerId);
-    setLastPlayerId(playerId);
+    setLastPlayerId(cachedPlayerId);
     // console.log("playerId value:", playerId);
     setLoading(false);
   };
@@ -153,7 +153,7 @@ function App() {
     try {
       setLoading(true);
       const startTime = new Date().getTime();
-
+      console.log("playerID value right before fetch:", playerId);
       const response = await fetch(
         `http://localhost:3000/${
           isAdmin ? "fetch_replays_admin" : "fetch_replays"
@@ -221,36 +221,36 @@ function App() {
 
   const handleSubmit = (e, sync = false) => {
     e.preventDefault();
+    if (!unprocessedPlayerId)
+      return setInputError("Please enter a valid player URL");
     setInputError(null);
 
-    if (unprocessedPlayerId !== lastPlayerId) {
-      localStorage.removeItem("cachedPlayerId");
-      setLastPlayerId(unprocessedPlayerId);
-      setPrefilteredReplays([]);
-    }
+    const trimmedPlayerId = unprocessedPlayerId
+      .match(
+        /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9_]+)$/
+      )?.[1]
+      .replace("/", ":");
 
-    const urlPattern =
-      /^https:\/\/ballchasing\.com\/player\/([^/]+\/[a-zA-Z0-9_]+)$/;
-
-    const match = unprocessedPlayerId.match(urlPattern);
-
-    if (!match) {
-      setInputError(
+    if (!trimmedPlayerId)
+      return setInputError(
         "Invalid URL format. The URL should look like the one displayed above"
       );
-      setLoading(false);
-      return;
+
+    if (unprocessedPlayerId !== lastPlayerId) {
+      // localStorage.removeItem("cachedPlayerId");
+      setLastPlayerId(unprocessedPlayerId);
+      // setPrefilteredReplays([]);
     }
 
-    const trimmedPlayerId = match[1].replace("/", ":");
     setPlayerId(trimmedPlayerId);
     localStorage.setItem("cachedPlayerId", trimmedPlayerId);
 
-    const afterDate = isAdmin
-      ? customDate.toISOString().split(".")[0] + "Z"
-      : null;
-
-    fetchReplays(trimmedPlayerId, afterDate, sync, fetchNewReplays);
+    fetchReplays(
+      trimmedPlayerId,
+      isAdmin ? customDate.toISOString().split(".")[0] + "Z" : null,
+      sync,
+      fetchNewReplays
+    );
   };
 
   useEffect(() => {
@@ -260,13 +260,19 @@ function App() {
     }
   }, []);
 
-  if (loading) return <div className="loading">LOADING...</div>;
   if (error)
     return (
-      <p className="error">
-        A network error was encountered. Check your internet connection and try
-        again.
-      </p>
+      <div className="error">
+        <p>
+          An error was encountered. Check your internet connection and try
+          again.
+        </p>
+        <p>
+          Otherwise, it was probably a bug. If refreshing the page doesn't fix
+          it, please make a pull request on Github with info about what happened
+          right before seeing the error and I'll do my best.
+        </p>
+      </div>
     );
 
   return (
@@ -318,11 +324,7 @@ function App() {
                       <input
                         type="checkbox"
                         checked={fetchNewReplays}
-                        onChange={
-                          (e) => setFetchNewReplays(e.target.checked)
-
-                          //  setFetchNewReplays(e.target.checked)
-                        }
+                        onChange={(e) => setFetchNewReplays(e.target.checked)}
                       />
                     </label>
                   </div>
@@ -340,11 +342,15 @@ function App() {
                   </div>
                 </div>
               )}
-              <div>
+              <div className={styles.playerInputFormSection}>
                 <label htmlFor="playerURL">
                   Paste player's profile URL here:
                   <input
-                    className={styles.playerProfileInput}
+                    className={
+                      inputError
+                        ? `${styles.playerProfileInput} bad-input`
+                        : `${styles.playerProfileInput}`
+                    }
                     type="text"
                     id="playerURL"
                     value={unprocessedPlayerId}
@@ -352,6 +358,7 @@ function App() {
                     placeholder="Enter player's ballchasing URL"
                   />
                 </label>
+                {inputError && <p className="input-error">{inputError}</p>}
               </div>
               <div className={styles.formBtnsContainer}>
                 <button type="submit">Get Replays</button>
@@ -362,36 +369,41 @@ function App() {
                 )}
               </div>
             </form>
-            {inputError && <p className="error">{inputError}</p>}
           </section>
         </div>
-        <div className={styles.statsSection}>
-          <div className={styles.leftCol}>
-            <section>
-              {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
-              {playerName && (
-                <div className={styles.playerStatsContainer}>
-                  <div ref={sentinelRef} className={styles.sentinel}></div>
-                  <div
-                    id="sticky"
-                    className={`${styles.playlistFilterSection} ${
-                      isSticky ? styles.sticky : ""
-                    }`}
-                  >
-                    <PlaylistFilter />
-                  </div>
-                  <Stats />
+        {loading ? (
+          <div className="loading">LOADING...</div>
+        ) : inputError ? null : (
+          <div>
+            {playerName && (
+              <div className={styles.statsSection}>
+                <div className={styles.leftCol}>
+                  <section>
+                    {/* would like to display a message when a player wasn't found vs when player just has no replays available */}
+                    <div className={styles.playerStatsContainer}>
+                      <div ref={sentinelRef} className={styles.sentinel}></div>
+                      <div
+                        id="sticky"
+                        className={`${styles.playlistFilterSection} ${
+                          isSticky ? styles.sticky : ""
+                        }`}
+                      >
+                        <PlaylistFilter />
+                      </div>
+                      <Stats />
+                    </div>
+                  </section>
                 </div>
-              )}
-            </section>
-          </div>
 
-          {playerName && (
-            <div className={styles.rightCol}>
-              <Sidebar />
-            </div>
-          )}
-        </div>
+                {playerName && (
+                  <div className={styles.rightCol}>
+                    <Sidebar />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <footer>
