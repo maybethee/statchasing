@@ -43,6 +43,10 @@
   font-weight: 600;
 }
 
+.componentNoChart ul {
+  align-items: flex-start;
+}
+
 @media (min-width: 992px) {
   .statsContainer {
     max-width: 600px;

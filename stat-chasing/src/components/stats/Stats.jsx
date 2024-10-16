@@ -52,7 +52,6 @@ function Stats() {
         <h2>{playerName}'s Stats:</h2>
       </div>
 
-      {/* <div> */}
       <div ref={sentinelRef} className={styles.sentinel}></div>
       <h3
         id="sticky"
@@ -62,15 +61,20 @@ function Stats() {
         )
       </h3>
 
-      {/* </div> */}
       <div className={styles.statsContainer}>
         <CarStats id="carSection" className={styles.component} />
         <WinLossStats id="winLossSection" className={styles.component} />
         <MovementStats id="movementSection" className={styles.component} />
         <OvertimeStats id="overtimeSection" className={styles.component} />
         <DemoStats id="demoSection" className={styles.component} />
-        <MapStats id="mapSection" className={styles.component} />
-        <DateStats id="dateSection" className={styles.component} />
+        <MapStats
+          id="mapSection"
+          className={`${styles.component} ${styles.componentNoChart}`}
+        />
+        <DateStats
+          id="dateSection"
+          className={`${styles.component} ${styles.componentNoChart}`}
+        />
       </div>
     </div>
   );

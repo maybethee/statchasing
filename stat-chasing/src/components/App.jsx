@@ -151,7 +151,6 @@ function App() {
     }
 
     try {
-      setLoading(true);
       const startTime = new Date().getTime();
       console.log("playerID value right before fetch:", playerId);
       const response = await fetch(
@@ -221,6 +220,8 @@ function App() {
 
   const handleSubmit = (e, sync = false) => {
     e.preventDefault();
+
+    setLoading(true);
     if (!unprocessedPlayerId)
       return setInputError("Please enter a valid player URL");
     setInputError(null);
@@ -262,16 +263,22 @@ function App() {
 
   if (error)
     return (
-      <div className="error">
-        <p>
-          An error was encountered. Check your internet connection and try
-          again.
-        </p>
-        <p>
-          Otherwise, it was probably a bug. If refreshing the page doesn't fix
-          it, please make a pull request on Github with info about what happened
-          right before seeing the error and I'll do my best.
-        </p>
+      <div className="error-container">
+        <div className="error">
+          <p>
+            An error was encountered. Check your internet connection and try
+            again.
+          </p>
+          <p>
+            If the error persists, it is likely a bug. I would appreciate if you
+            reported it as an issue on{" "}
+            <a href="https://github.com/maybethee/stat-chasing-rails/issues">
+              Github
+            </a>{" "}
+            with info about what happened right before seeing the error and I'll
+            do my best to fix it 🫡.
+          </p>
+        </div>
       </div>
     );
 
@@ -372,7 +379,7 @@ function App() {
           </section>
         </div>
         {loading ? (
-          <div className="loading">LOADING...</div>
+          <div className="loading"></div>
         ) : inputError ? null : (
           <div>
             {playerName && (

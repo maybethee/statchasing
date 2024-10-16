@@ -236,7 +236,6 @@ function WinLossStats({ id, className }) {
             labels: ["5+", "4", "3", "2", "1", "1", "2", "3", "4", "5+"],
             datasets: [
               {
-                // might just make a custom label...
                 label: "",
                 data: combinedGoalDiffs,
                 backgroundColor: backgroundColors,

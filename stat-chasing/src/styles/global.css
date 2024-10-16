@@ -166,6 +166,7 @@ caption {
 ul {
   display: flex;
   flex-flow: column;
+  align-items: center;
   gap: 0.3rem;
   width: 70%;
 }
@@ -206,6 +207,10 @@ footer {
   background-color: #17181c;
   padding: 0.8rem;
   font-size: 1.1rem;
+}
+
+.sidebar ul {
+  align-items: flex-start;
 }
 
 .sidebar a {
@@ -271,6 +276,54 @@ h3.chart-header {
   outline: solid 2px rgb(255, 99, 132);
 }
 
+.loading {
+  margin: 3rem 0;
+  width: 90vw;
+  height: 500px;
+  border-radius: 5px;
+  background: repeating-linear-gradient(
+    90deg,
+    #17181c,
+    #202125,
+    #303035,
+    #202125,
+    #17181c
+  );
+  background-repeat: repeat-x;
+  background-size: 400% 100%;
+  animation: loading-gradient 1.5s linear infinite;
+}
+
+@keyframes loading-gradient {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: -33% 50%;
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.error {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  background-color: rgba(87, 2, 20, 0.7);
+  padding: 2.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-flow: column;
+  row-gap: 1rem;
+  width: clamp(250px, 60%, 800px);
+}
+
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
 }
@@ -286,14 +339,14 @@ h3.chart-header {
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
   .bar-chart {
-    width: clamp(400px, 100%, 600px);
+    width: clamp(400px, 100%, 550px);
   }
 }
 
 /* X-Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
   .bar-chart {
-    width: clamp(400px, 100%, 800px);
+    width: clamp(400px, 100%, 750px);
   }
 }
 
