@@ -8,7 +8,7 @@ gem 'rails', '~> 7.1.4'
 gem 'rack-cors'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem 'sprockets-rails'
+# gem 'sprockets-rails'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
@@ -73,3 +73,5 @@ gem 'figaro'
 gem 'httparty'
 
 gem 'devise', '~> 4.9'
+
+gem 'dockerfile-rails', '>= 1.6', group: :development
