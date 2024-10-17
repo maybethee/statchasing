@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'static/index'
   devise_for :users, path: '', path_names: { sign_in: 'chip_time' }
 
   namespace :api do
@@ -17,6 +18,8 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get 'up' => 'rails/health#show', as: :rails_health_check
+
+  get '*path', to: 'static#index', constraints: ->(req) { !req.xhr? && req.format.html? }
 
   # Defines the root path route ("/")
   # root "posts#index"
