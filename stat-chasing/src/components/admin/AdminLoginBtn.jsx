@@ -1,7 +1,9 @@
 const AdminLoginBtn = () => {
   return (
     <button
-      onClick={() => (window.location.href = "http://localhost:3000/chip_time")}
+      onClick={() =>
+        (window.location.href = "https://stat-chasing-rails.fly.dev/chip_time")
+      }
     >
       Admin Login
     </button>

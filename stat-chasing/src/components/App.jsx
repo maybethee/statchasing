@@ -90,13 +90,16 @@ function App() {
 
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/check_admin", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://stat-chasing-rails.fly.dev/api/v1/check_admin",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
@@ -154,7 +157,7 @@ function App() {
       const startTime = new Date().getTime();
       console.log("playerID value right before fetch:", playerId);
       const response = await fetch(
-        `http://localhost:3000/${
+        `https://stat-chasing-rails.fly.dev/${
           isAdmin ? "fetch_replays_admin" : "fetch_replays"
         }`,
         {
@@ -319,7 +322,7 @@ function App() {
                 one shown in the image below:
               </p>
               <img
-                src="../../assets/player-profile-url.png"
+                src="/player-profile-url.png"
                 alt="Paste the URL copied from the address bar on a player's profile on ballchasing.com. The URL should follow this pattern: https://ballchasing.com/player/platform/id, where 'platform' can be 'steam', 'epic', 'psn', 'xbox', or 'switch', and 'id' will be a numeric or alphanumeric string, or otherwise may be the player's in-game name, depending on the platform."
               />
               {isAdmin && (

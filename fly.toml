@@ -8,6 +8,18 @@ primary_region = 'ewr'
 console_command = '/rails/bin/rails console'
 
 [build]
+ # Command to build the React app and copy the output to the public directory
+  build_command = """
+    npm install --prefix ./stat-chasing && \
+    echo "Installed npm packages" && \
+    npm run build --prefix ./stat-chasing && \
+    echo "Build complete" && \
+    ls ./stat-chasing/dist && \
+    cp -r ./stat-chasing/dist/* ./public/ && \
+    echo "Files copied to public" && \
+    ls ./public
+  """
+  verbose = true
 
 [deploy]
   release_command = './bin/rails db:prepare'

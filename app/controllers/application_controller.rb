@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
   def after_sign_in_path_for(_resource)
-    'http://localhost:5173/admin'
+    'https://stat-chasing-rails.fly.dev/admin'
   end
 end
