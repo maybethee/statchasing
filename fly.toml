@@ -1,25 +1,13 @@
-# fly.toml app configuration file generated for stat-chasing-rails on 2024-10-17T14:23:41-04:00
+# fly.toml app configuration file generated for statchasing on 2024-10-18T13:28:44-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'stat-chasing-rails'
+app = 'statchasing'
 primary_region = 'ewr'
 console_command = '/rails/bin/rails console'
 
 [build]
- # Command to build the React app and copy the output to the public directory
-  build_command = """
-    npm install --prefix ./stat-chasing && \
-    echo "Installed npm packages" && \
-    npm run build --prefix ./stat-chasing && \
-    echo "Build complete" && \
-    ls ./stat-chasing/dist && \
-    cp -r ./stat-chasing/dist/* ./public/ && \
-    echo "Files copied to public" && \
-    ls ./public
-  """
-  verbose = true
 
 [deploy]
   release_command = './bin/rails db:prepare'

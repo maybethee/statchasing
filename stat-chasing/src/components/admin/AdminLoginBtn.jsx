@@ -2,7 +2,7 @@ const AdminLoginBtn = () => {
   return (
     <button
       onClick={() =>
-        (window.location.href = "https://stat-chasing-rails.fly.dev/chip_time")
+        (window.location.href = "https://statchasing.fly.dev/chip_time")
       }
     >
       Admin Login

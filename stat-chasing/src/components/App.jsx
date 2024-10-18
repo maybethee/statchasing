@@ -91,7 +91,7 @@ function App() {
   const checkAdminStatus = async () => {
     try {
       const response = await fetch(
-        "https://stat-chasing-rails.fly.dev/api/v1/check_admin",
+        "https://statchasing.fly.dev/api/v1/check_admin",
         {
           method: "GET",
           headers: {
@@ -157,7 +157,7 @@ function App() {
       const startTime = new Date().getTime();
       console.log("playerID value right before fetch:", playerId);
       const response = await fetch(
-        `https://stat-chasing-rails.fly.dev/${
+        `https://statchasing.fly.dev/${
           isAdmin ? "fetch_replays_admin" : "fetch_replays"
         }`,
         {
@@ -297,9 +297,9 @@ function App() {
           <section className={styles.welcomeSection}>
             <h2>Welcome</h2>
             <p>
-              Find some interesting stats based on players' ballchasing.com
-              profiles. Currently, this only fetches replays from the last 30
-              days.
+              Find some interesting stats based on players'{" "}
+              <a href="https://ballchasing.com/">ballchasing.com</a> profiles.
+              Currently, this only fetches replays from the last 30 days.
             </p>
             <p>
               Note: due to the API rate limitations set by ballchasing, this
