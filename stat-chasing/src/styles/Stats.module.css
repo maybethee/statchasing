@@ -47,6 +47,10 @@
   align-items: flex-start;
 }
 
+.componentNoChart li {
+  text-align: start;
+}
+
 /* @media (min-width: 992px) {
   .statsContainer {
     max-width: 600px;
