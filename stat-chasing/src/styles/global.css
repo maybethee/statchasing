@@ -105,7 +105,7 @@ input:focus {
   margin: 1rem 0;
   background-color: #333333;
   position: relative;
-  width: clamp(200px, 100%, 350px);
+  width: clamp(200px, 100%, 300px);
 }
 
 a {

@@ -41,7 +41,7 @@
 }
 
 .welcomeSection {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .welcomeSection p {
@@ -87,7 +87,7 @@
 }
 
 .playerProfileInput {
-  width: 400px;
+  width: 90%;
 }
 
 .formBtnsContainer {
@@ -138,6 +138,12 @@
 
 .rightCol {
   display: none;
+}
+
+@media (min-width: 576px) {
+  .playerProfileInput {
+    width: 400px;
+  }
 }
 
 @media (min-width: 768px) {

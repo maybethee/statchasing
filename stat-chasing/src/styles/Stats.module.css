@@ -1,7 +1,7 @@
 .statsContainer {
   display: flex;
   flex-flow: column;
-  max-width: 450px;
+  /* max-width: 450px; */
 }
 
 .statsContainerHeader h2 {
@@ -47,7 +47,7 @@
   align-items: flex-start;
 }
 
-@media (min-width: 992px) {
+/* @media (min-width: 992px) {
   .statsContainer {
     max-width: 600px;
   }
@@ -57,4 +57,4 @@
   .statsContainer {
     max-width: 800px;
   }
-}
+} */
