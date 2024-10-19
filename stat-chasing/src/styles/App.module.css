@@ -153,10 +153,7 @@
     align-content: flex-start;
     position: relative;
   }
-}
-
-@media (min-width: 992px) {
   .playerProfileInput {
-    width: 550px;
+    width: 450px;
   }
 }

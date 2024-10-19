@@ -1,6 +1,7 @@
 class FetchReplaysService
   include HTTParty
-  base_uri ENV['API_BASE_URL']
+  # base_uri ENV['API_BASE_URL']
+  base_uri 'https://ballchasing.com/api/'
 
   def initialize(player_id:, after_date: '2024-10-10T00:00:00Z')
     @player = Player.find_by(player_id:)
