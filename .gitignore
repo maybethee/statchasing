@@ -36,3 +36,5 @@
 
 # Ignore application configuration
 /config/application.yml
+
+/stat-chasing/src/components/admin/AdminLoginBtn.jsx

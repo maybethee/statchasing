@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useReplays } from "./ReplaysContext";
 import { wrappedUtils } from "../utils/utils";
-import AdminLoginBtn from "./admin/AdminLoginBtn";
 import AdminAuxBtns from "./admin/AdminAuxBtns";
 import PlaylistFilter from "./PlaylistFilter";
 import Sidebar from "./Sidebar";
@@ -241,9 +240,7 @@ function App() {
       );
 
     if (unprocessedPlayerId !== lastPlayerId) {
-      // localStorage.removeItem("cachedPlayerId");
       setLastPlayerId(unprocessedPlayerId);
-      // setPrefilteredReplays([]);
     }
 
     setPlayerId(trimmedPlayerId);
@@ -291,8 +288,6 @@ function App() {
         <div className={styles.headerSection}>
           <header className={styles.mainHeader}>
             <h1>Statchasing</h1>
-            {/* remove admin login button for production */}
-            <AdminLoginBtn />
           </header>
           <section className={styles.welcomeSection}>
             <h2>Welcome</h2>
@@ -371,7 +366,7 @@ function App() {
                 {inputError && <p className="input-error">{inputError}</p>}
               </div>
               <div className={styles.formBtnsContainer}>
-                <button type="submit">Get Replays</button>
+                <button type="submit">See Stats</button>
                 {isAdmin && (
                   <button onClick={(e) => handleSubmit(e, true)}>
                     Sync Replays

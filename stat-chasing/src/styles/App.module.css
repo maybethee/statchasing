@@ -146,7 +146,6 @@
     flex-flow: column wrap;
     align-content: flex-start;
     position: relative;
-    /* flex-basis: 30%; */
   }
 }
 
