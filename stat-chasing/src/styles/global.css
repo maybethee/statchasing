@@ -227,6 +227,8 @@ footer {
 
 .sidebar li a {
   padding-left: 0.3rem;
+  border-left: 3px solid transparent;
+  box-sizing: border-box;
 }
 
 .sidebar li a:hover {
