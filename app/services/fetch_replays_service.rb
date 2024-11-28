@@ -3,7 +3,7 @@ class FetchReplaysService
   # base_uri ENV['API_BASE_URL']
   base_uri 'https://ballchasing.com/api/'
 
-  def initialize(player_id:, after_date: '2024-10-10T00:00:00Z')
+  def initialize(player_id:, after_date: '2024-11-10T00:00:00Z')
     @player = Player.find_by(player_id:)
     @options = {
       headers: { 'Authorization' => ENV['API_AUTH_TOKEN'].to_s },

@@ -1,6 +1,5 @@
 import { useReplays } from "../ReplaysContext";
 import { wrappedUtils } from "../../utils/utils";
-// import { useState, useEffect } from "react";
 import PieChart from "../charts/PieChart";
 import { Bar } from "react-chartjs-2";
 import {
@@ -26,37 +25,41 @@ function WinLossStats({ id, className }) {
   const { replays, playerId } = useReplays();
 
   function gamesWonGoalDiffs() {
-    const goalDiffsArr = [];
+    const goalDiffsArr = new Array(5).fill(0);
 
-    // 5 times, do:
-    for (let n = 1; n <= 5; n++) {
-      const gamesAtNDiff = replays.filter((replay) => {
-        const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
-        const nGoals = wrappedUtils.isGoalDifference(replay, n);
-        return isWinner && nGoals;
-      });
-      // console.log(gamesAtNDiff);
-      // console.log(gamesAtNDiff.length);
-      goalDiffsArr.push(gamesAtNDiff.length);
-    }
+    replays.forEach((replay) => {
+      const isWinner = wrappedUtils.isPlayerWinner(replay, playerId);
+
+      if (isWinner) {
+        for (let n = 1; n <= 5; n++) {
+          if (wrappedUtils.isGoalDifference(replay, n)) {
+            goalDiffsArr[n - 1]++;
+            break;
+          }
+        }
+      }
+    });
+
     // console.log("games won diff array: ", goalDiffsArr);
     return goalDiffsArr;
   }
 
   function gamesLostGoalDiffs() {
-    const goalDiffsArr = [];
+    const goalDiffsArr = new Array(5).fill(0);
 
-    // 5 times, do:
-    for (let n = 1; n <= 5; n++) {
-      const gamesAtNDiff = replays.filter((replay) => {
-        const isLoser = !wrappedUtils.isPlayerWinner(replay, playerId);
-        const nGoals = wrappedUtils.isGoalDifference(replay, n);
-        return isLoser && nGoals;
-      });
-      // console.log(gamesAtNDiff);
-      // console.log(gamesAtNDiff.length);
-      goalDiffsArr.push(gamesAtNDiff.length);
-    }
+    replays.forEach((replay) => {
+      const isLoser = !wrappedUtils.isPlayerWinner(replay, playerId);
+
+      if (isLoser) {
+        for (let n = 1; n <= 5; n++) {
+          if (wrappedUtils.isGoalDifference(replay, n)) {
+            goalDiffsArr[n - 1]++;
+            break;
+          }
+        }
+      }
+    });
+
     // console.log("games lost diff array: ", goalDiffsArr);
     return goalDiffsArr;
   }
@@ -216,6 +219,7 @@ function WinLossStats({ id, className }) {
                 className="bar-chart-label-span"
                 style={{
                   backgroundColor: "rgb(54, 162, 235)",
+                  border: "solid 2px white",
                 }}
               ></span>
               <p>Wins</p>
@@ -225,6 +229,7 @@ function WinLossStats({ id, className }) {
                 className="bar-chart-label-span"
                 style={{
                   backgroundColor: "rgb(255, 95, 132)",
+                  border: "solid 2px white",
                 }}
               ></span>
               <p>Losses</p>

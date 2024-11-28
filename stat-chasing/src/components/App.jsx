@@ -313,8 +313,8 @@ function App() {
 
             <form className={styles.playerSearchForm} onSubmit={handleSubmit}>
               <p>
-                Start by copying a player's entire ballchasing profile URL, the
-                one shown in the image below:
+                Start by copying a player's entire ballchasing profile URL, like
+                the one shown in the image below:
               </p>
               <img
                 src="/player-profile-url.png"

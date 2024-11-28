@@ -26,6 +26,7 @@ const Sidebar = () => {
 
   const links = [
     { href: "#carSection", label: "Cars" },
+    { href: "#statsSection", label: "Stats" },
     { href: "#winLossSection", label: "Win/Loss" },
     { href: "#movementSection", label: "Movement" },
     { href: "#overtimeSection", label: "Overtimes" },

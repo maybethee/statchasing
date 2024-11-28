@@ -6,9 +6,9 @@ import OvertimeStats from "./OvertimeStats";
 import DemoStats from "./DemoStats";
 import MovementStats from "./MovementStats";
 import CarStats from "./CarStats";
+import StatsStats from "./StatsStats";
 import MapStats from "./MapStats";
 import pluralize from "pluralize";
-
 import styles from "../../styles/Stats.module.css";
 
 function Stats() {
@@ -63,6 +63,7 @@ function Stats() {
 
       <div className={styles.statsContainer}>
         <CarStats id="carSection" className={styles.component} />
+        <StatsStats id="statsSection" className={styles.component} />
         <WinLossStats id="winLossSection" className={styles.component} />
         <MovementStats id="movementSection" className={styles.component} />
         <OvertimeStats id="overtimeSection" className={styles.component} />
